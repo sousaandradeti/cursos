@@ -18,7 +18,7 @@
     .rating-box {
         display: flex;
         justify-content: center;
-        direction: rtl; 
+        direction: rtl; /* Inverte a ordem para que o 5 fique à direita */
         margin: 15px 0;
     }
 
@@ -93,13 +93,48 @@
     const p = new URLSearchParams(window.location.search);
     const courseLabel = document.getElementById("course-label");
 
+    // --- Função Simples de Capitalização ---
+    // Deixa apenas a primeira letra em maiúsculo e mantém o restante
+    function capitalizeFirstLetter(string) {
+        if (!string) return '';
+        // Garante que o restante da string esteja em minúsculo, mas mantém a formatação da URL se houver (ex: Lideranca)
+        string = string.toLowerCase();
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    // ----------------------------------------
+    
     // --- 1. Lógica para o Curso ---
     let cursoValue = p.get("curso");
     
-    // Normaliza o nome do curso (opcional, mas recomendado para exibição amigável)
     if (cursoValue) {
-        // Substitui underscores por espaços e capitaliza a primeira letra de cada palavra
-        let displayName = cursoValue.replace(/_/g, ' ')
-                                     .toLowerCase()
-                                     .split(' ')
-                                     .map(word =>
+        // Substitui '_' por espaço e capitaliza a primeira letra para exibição
+        let displayName = cursoValue.replace(/_/g, ' ');
+        // Aplica a capitalização apenas na primeira palavra após a substituição
+        displayName = displayName.split(' ').map((word, index) => {
+            return (index === 0) ? capitalizeFirstLetter(word) : word;
+        }).join(' ');
+
+        // Se fosse apenas uma palavra (ex: Lideranca), o resultado é Lideranca
+        
+        // Atualiza o campo oculto com o valor original da URL
+        document.getElementById("curso").value = cursoValue;
+        
+        // Atualiza a frase do rótulo
+        courseLabel.textContent = `Sua Avaliação do Curso: ${displayName}`;
+        console.log("Curso lido e formatado para exibição:", displayName);
+    } else {
+        // Se o curso não for encontrado, mantém a frase original
+        courseLabel.textContent = "Sua Avaliação do Curso:";
+        console.warn("Parâmetro 'curso' ausente na URL. Usando texto padrão.");
+    }
+
+    // --- 2. Lógica para o Status ---
+    const statusValue = p.get("status");
+    if (statusValue) {
+        document.getElementById("status").value = statusValue;
+        console.log("Status lido da URL:", statusValue);
+    }
+</script>
+
+</body>
+</html>
