@@ -32,8 +32,26 @@
 </div>
 
 <script>
+    // 1. Cria o objeto para ler os parâmetros da URL
     const p = new URLSearchParams(window.location.search);
-    document.getElementById("curso").value = p.get("curso");
+    
+    // 2. Lê e preenche o campo "curso"
+    const cursoValue = p.get("curso");
+    if (cursoValue) {
+        document.getElementById("curso").value = cursoValue;
+        console.log("Curso lido da URL:", cursoValue);
+    } else {
+        console.warn("Parâmetro 'curso' ausente na URL.");
+    }
+
+    // 3. LÊ E PREENCHE O CAMPO "STATUS" (A Linha que Faltava!)
+    const statusValue = p.get("status");
+    if (statusValue) {
+        document.getElementById("status").value = statusValue;
+        console.log("Status lido da URL:", statusValue);
+    } else {
+        console.warn("Parâmetro 'status' ausente na URL.");
+    }
 </script>
 
 </body>
