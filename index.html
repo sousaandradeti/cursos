@@ -13,6 +13,45 @@
     }
     button{ background:#0176ff; color:white; cursor:pointer; border:none;}
     button:hover{ background:#005ad1; }
+
+    /* --- Estilos para o Seletor de Emojis (Rating) --- */
+    .rating-box {
+        display: flex;
+        justify-content: center;
+        direction: rtl; 
+        margin: 15px 0;
+    }
+
+    .rating-box input[type="radio"] {
+        display: none;
+    }
+
+    .rating-box label {
+        font-size: 40px;
+        color: #ccc; 
+        cursor: pointer;
+        padding: 0 5px;
+        transition: color 0.2s, transform 0.2s;
+    }
+
+    /* Define os emojis para cada ponto */
+    .rating-box label[for="star5"]::before { content: '😀'; }
+    .rating-box label[for="star4"]::before { content: '🙂'; }
+    .rating-box label[for="star3"]::before { content: '😐'; }
+    .rating-box label[for="star2"]::before { content: '🙁'; }
+    .rating-box label[for="star1"]::before { content: '😠'; }
+
+    /* Efeito de hover e seleção */
+    .rating-box label:hover,
+    .rating-box label:hover ~ label,
+    .rating-box input[type="radio"]:checked ~ label {
+        color: #ffc107;
+        transform: scale(1.1);
+    }
+
+    .rating-box input[type="radio"]:checked + label {
+        color: #ff9800;
+    }
 </style>
 </head>
 <body>
@@ -24,7 +63,25 @@
         <input type="text" name="nome" placeholder="Seu nome" required>
         <input type="email" name="email" placeholder="Seu email" required>
         <input type="hidden" name="curso" id="curso">
-        <input type="text" name="nota" placeholder="Nota" required>
+        
+        <label id="course-label" style="margin-top: 15px; display: block;">Sua Avaliação do Curso:</label>
+        <div class="rating-box">
+            <input type="radio" id="star5" name="nota" value="5" required />
+            <label for="star5" title="Excelente (5)"></label>
+
+            <input type="radio" id="star4" name="nota" value="4" />
+            <label for="star4" title="Bom (4)"></label>
+
+            <input type="radio" id="star3" name="nota" value="3" />
+            <label for="star3" title="Razoável (3)"></label>
+
+            <input type="radio" id="star2" name="nota" value="2" />
+            <label for="star2" title="Ruim (2)"></label>
+
+            <input type="radio" id="star1" name="nota" value="1" />
+            <label for="star1" title="Muito Ruim (1)"></label>
+        </div>
+
         <input type="hidden" name="status" id="status">
         
         <button type="submit">Concluir</button>
@@ -32,27 +89,17 @@
 </div>
 
 <script>
-    // 1. Cria o objeto para ler os parâmetros da URL
+    // Usa o objeto URLSearchParams para ler os parâmetros
     const p = new URLSearchParams(window.location.search);
+    const courseLabel = document.getElementById("course-label");
+
+    // --- 1. Lógica para o Curso ---
+    let cursoValue = p.get("curso");
     
-    // 2. Lê e preenche o campo "curso"
-    const cursoValue = p.get("curso");
+    // Normaliza o nome do curso (opcional, mas recomendado para exibição amigável)
     if (cursoValue) {
-        document.getElementById("curso").value = cursoValue;
-        console.log("Curso lido da URL:", cursoValue);
-    } else {
-        console.warn("Parâmetro 'curso' ausente na URL.");
-    }
-
-    // 3. LÊ E PREENCHE O CAMPO "STATUS" (A Linha que Faltava!)
-    const statusValue = p.get("status");
-    if (statusValue) {
-        document.getElementById("status").value = statusValue;
-        console.log("Status lido da URL:", statusValue);
-    } else {
-        console.warn("Parâmetro 'status' ausente na URL.");
-    }
-</script>
-
-</body>
-</html>
+        // Substitui underscores por espaços e capitaliza a primeira letra de cada palavra
+        let displayName = cursoValue.replace(/_/g, ' ')
+                                     .toLowerCase()
+                                     .split(' ')
+                                     .map(word =>
