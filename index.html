@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Confirmação de Curso</title>
+
+<style>
+    body { font-family: Arial; background:#f7f7f7; padding:40px; }
+    .box { background:white; max-width:400px; margin:auto; padding:30px; border-radius:10px; box-shadow:0 0 10px #00000015; }
+    h2 { text-align:center; }
+    input, button{
+        width:100%; padding:12px; margin-top:10px; border-radius:6px; font-size:16px;
+    }
+    button{ background:#0176ff; color:white; cursor:pointer; border:none;}
+    button:hover{ background:#005ad1; }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h2>Finalização do Curso</h2>
+
+    <form method="POST" action="https://script.google.com/macros/s/AKfycbwnIa5h_02gJmmte6Ue_dS_TRkE5tllH3GWhATu4ni73zEOBlNW7UlinnBUHuOT_f-8jQ/exec">
+        <input type="text" name="nome" placeholder="Seu nome" required>
+        <input type="email" name="email" placeholder="Seu email" required>
+        <input type="hidden" name="curso" id="curso">
+        <input type="text" name="nota" placeholder="Nota" required>
+        <input type="text" name="data" placeholder="Data" required>
+        <button type="submit">Concluir</button>
+    </form>
+</div>
+
+<script>
+    const p = new URLSearchParams(window.location.search);
+    document.getElementById("curso").value = p.get("curso");
+</script>
+
+</body>
+</html>
