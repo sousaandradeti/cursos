@@ -5,21 +5,50 @@
 <title>Confirmação de Curso</title>
 
 <style>
-    body { font-family: Arial; background:#f7f7f7; padding:40px; }
-    .box { background:white; max-width:400px; margin:auto; padding:30px; border-radius:10px; box-shadow:0 0 10px #00000015; }
-    h2 { text-align:center; }
-    input, button{
-        width:100%; padding:12px; margin-top:10px; border-radius:6px; font-size:16px;
+    body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; }
+    .box { 
+        background:white; 
+        max-width:400px; 
+        margin:auto; 
+        /* AUMENTO DO PREENCHIMENTO (PADDING) INTERNO */
+        padding: 30px 40px; /* 30px superior/inferior, 40px lateral */
+        border-radius:10px; 
+        box-shadow:0 0 15px #00000025; /* Sombra mais suave */
     }
-    button{ background:#0176ff; color:white; cursor:pointer; border:none;}
+    h2 { 
+        text-align:center; 
+        margin-bottom: 25px; /* Espaço após o título */
+    }
+    /* AJUSTE GERAL DE INPUTS E BOTÕES */
+    input[type="text"], input[type="email"], button {
+        width: 100%; 
+        padding: 12px; 
+        margin-top: 0; 
+        /* ESPAÇAMENTO INFERIOR PARA SEPARAR OS CAMPOS */
+        margin-bottom: 15px; 
+        border-radius: 6px; 
+        font-size: 16px;
+        border: 1px solid #ccc; /* Adiciona uma borda leve aos inputs */
+        box-sizing: border-box; /* Garante que padding e border não aumentem a largura total */
+    }
+    /* SOBRESCREVENDO O ESTILO DO BOTÃO */
+    button{ 
+        background:#0176ff; 
+        color:white; 
+        cursor:pointer; 
+        border:none;
+        padding: 14px; /* Botão ligeiramente mais alto */
+        margin-top: 20px; /* Mais espaço antes do botão */
+        font-weight: bold;
+    }
     button:hover{ background:#005ad1; }
 
     /* --- Estilos para o Seletor de Emojis (Rating) --- */
     .rating-box {
         display: flex;
-        justify-content: center;
-        direction: rtl; /* Inverte a ordem para que o 5 fique à direita */
-        margin: 15px 0;
+        justify-content: space-between; /* Melhor espaçamento entre as carinhas */
+        direction: rtl; 
+        margin: 15px 0 25px 0; /* Mais espaço antes do botão */
     }
 
     .rating-box input[type="radio"] {
@@ -30,9 +59,12 @@
         font-size: 40px;
         color: #ccc; 
         cursor: pointer;
-        padding: 0 5px;
+        padding: 0 2px; /* Reduzido para usar o space-between */
         transition: color 0.2s, transform 0.2s;
         position: relative; 
+        /* Aumento do tamanho do alvo clicável */
+        min-width: 45px; 
+        text-align: center;
     }
 
     /* Define os emojis para cada ponto */
@@ -40,7 +72,8 @@
     .rating-box label[for="star4"]::before { content: '🙂'; }
     .rating-box label[for="star3"]::before { content: '😐'; }
     .rating-box label[for="star2"]::before { content: '🙁'; }
-    .rating-box label[for="star1"]::before { content: '😠'; }
+    /* Ajustando o emoji do 1 para ficar mais nítido */
+    .rating-box label[for="star1"]::before { content: '😡'; } 
 
     /* Efeito de hover e seleção */
     .rating-box label:hover,
@@ -83,7 +116,7 @@
         <input type="hidden" name="curso" id="curso">
         
         <div id="rating-section"> 
-            <label id="course-label" style="margin-top: 15px; display: block;">Sua Avaliação do Curso:</label>
+            <label id="course-label" style="margin-top: 0; margin-bottom: 10px; display: block;">Sua Avaliação do Curso:</label>
             <div class="rating-box">
                 <input type="radio" id="star5" name="nota" value="5" required />
                 <label for="star5" title="Excelente (5)"></label>
