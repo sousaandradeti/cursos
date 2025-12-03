@@ -32,6 +32,8 @@
         cursor: pointer;
         padding: 0 5px;
         transition: color 0.2s, transform 0.2s;
+        /* Adicionado para posicionar o ícone de check corretamente */
+        position: relative; 
     }
 
     /* Define os emojis para cada ponto */
@@ -51,6 +53,23 @@
 
     .rating-box input[type="radio"]:checked + label {
         color: #ff9800;
+    }
+
+    /* --- NOVO ESTILO PARA O CHECK DE SELEÇÃO --- */
+    .rating-box input[type="radio"]:checked + label::after {
+        content: '\2713'; /* Símbolo Unicode para checkmark (✓) */
+        position: absolute;
+        bottom: -15px; /* Deslocamento para baixo */
+        left: 50%;
+        transform: translateX(-50%); /* Centraliza */
+        background-color: #28a745; /* Fundo verde */
+        color: white;
+        font-size: 14px;
+        line-height: 1;
+        padding: 3px 6px;
+        border-radius: 50%; /* Formato de círculo */
+        z-index: 10;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 </style>
 </head>
@@ -94,10 +113,8 @@
     const courseLabel = document.getElementById("course-label");
 
     // --- Função Simples de Capitalização ---
-    // Deixa apenas a primeira letra em maiúsculo e mantém o restante
     function capitalizeFirstLetter(string) {
         if (!string) return '';
-        // Garante que o restante da string esteja em minúsculo, mas mantém a formatação da URL se houver (ex: Lideranca)
         string = string.toLowerCase();
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
@@ -107,23 +124,16 @@
     let cursoValue = p.get("curso");
     
     if (cursoValue) {
-        // Substitui '_' por espaço e capitaliza a primeira letra para exibição
         let displayName = cursoValue.replace(/_/g, ' ');
-        // Aplica a capitalização apenas na primeira palavra após a substituição
         displayName = displayName.split(' ').map((word, index) => {
             return (index === 0) ? capitalizeFirstLetter(word) : word;
         }).join(' ');
-
-        // Se fosse apenas uma palavra (ex: Lideranca), o resultado é Lideranca
         
-        // Atualiza o campo oculto com o valor original da URL
         document.getElementById("curso").value = cursoValue;
         
-        // Atualiza a frase do rótulo
         courseLabel.textContent = `Sua Avaliação do Curso: ${displayName}`;
         console.log("Curso lido e formatado para exibição:", displayName);
     } else {
-        // Se o curso não for encontrado, mantém a frase original
         courseLabel.textContent = "Sua Avaliação do Curso:";
         console.warn("Parâmetro 'curso' ausente na URL. Usando texto padrão.");
     }
