@@ -114,7 +114,7 @@
         box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
     
-    /* --- Estilos para a Mensagem de Sucesso e Redirecionamento --- */
+    /* --- Estilos para a Mensagem de Sucesso e irecionamento --- */
     .success-box {
         text-align: center;
         /* Padding ajustado para a tela de sucesso */
@@ -128,8 +128,8 @@
         margin-bottom: 25px;
         color: #555;
     }
-    /* Novo estilo para a tela de redirecionamento imediato */
-    .redirect-box h2 {
+    /* Novo estilo para a tela de irecionamento imediato */
+    .irect-box h2 {
         color: #0176ff;
     }
 
@@ -158,8 +158,8 @@
     <h2 id="final-message-title">🎉 Avaliação Enviada!</h2>
     <p id="success-message">Obrigado! Sua avaliação foi registrada com sucesso.</p>
     
-    <!-- Botão de redirecionamento para o YouTube (usado apenas na conclusão) -->
-    <a href="https://www.youtube.com/" target="_blank" class="button-link">Voltar para o Início</a>
+    <!-- Botão de irecionamento para o YouTube (usado apenas na conclusão) -->
+    <a href="https://sousaandrade.sharepoint.com/" target="_blank" class="button-link">Voltar para o Início</a>
 </div>
 
 <!-- Caixa Principal do Formulário -->
@@ -219,7 +219,7 @@
         const submitButton = document.getElementById("submitButton"); // Pego o botão por ID
 
         const SCRIPT_URL = document.getElementById("scriptUrl").value;
-        const REDIRECT_YOUTUBE = "https://www.youtube.com/"; // URL para onde redirecionar
+        const REDIRECT_YOUTUBE = "https://sousaandrade-my.sharepoint.com/:b:/g/personal/bruno_santos_sousaandrade_com_br/IQBV8SGErc8VSo8kFiMy120GAbUaKmo7F_hEQJzcX1fQHRc?e=YMw4kf"; // URL para onde redirecionar
 
         // --- Função Simples de Capitalização ---
         function capitalizeFirstLetter(string) {
@@ -337,9 +337,9 @@
                         mainBox.classList.add('hidden');
                         successBox.classList.remove('hidden');
                         successBox.classList.remove('redirect-box');
-                        finalMessageTitle.textContent = '🎉 Avaliação Enviada!';
+                        finalMessageTitle.textContent = '🎉 Curso Conluído!!!';
                         successMessage.textContent = 'Obrigado! Sua avaliação foi registrada com sucesso.';
-                        redirectLink.classList.remove('hidden');
+                        irectLink.classList.remove('hidden');
                     } else {
                         // Trata erros de registro
                         // alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
@@ -350,7 +350,7 @@
             })
             .catch(error => {
                 console.error('Erro na submissão:', error);
-                // alert('Erro na conexão. Verifique sua URL do App Script e a conexão de rede.');
+                // alert('Erro na conexão. Verifique sua URL do App Script e a conexão de e.');
                 submitButton.textContent = (statusValue && statusValue.toLowerCase() === "iniciado") ? 'Iniciar Curso' : 'Concluir';
                 submitButton.disabled = false;
             });
