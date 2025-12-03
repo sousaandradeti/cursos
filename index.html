@@ -12,7 +12,7 @@
         background:white; 
         max-width:400px; 
         margin:auto; 
-        padding: 30px 40px; /* 30px superior/inferior, 40px lateral */
+        padding: 30px 40px; 
         border-radius:10px; 
         box-shadow:0 0 15px #00000025;
         box-sizing: border-box; 
@@ -113,7 +113,7 @@
         box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
     
-    /* --- Estilos para a Mensagem de Sucesso e irecionamento --- */
+    /* --- Estilos para a Mensagem de Sucesso e Redirecionamento --- */
     .success-box {
         text-align: center;
         padding: 50px 40px !important; 
@@ -126,7 +126,7 @@
         margin-bottom: 25px;
         color: #555;
     }
-    /* Novo estilo para a tela de irecionamento imediato */
+    /* Novo estilo para a tela de Redirecionamento imediato */
     .redirect-box h2 {
         color: #0176ff;
     }
@@ -223,12 +223,13 @@
         let cursoValue = p.get("curso");
         
         if (cursoValue) {
+            // Formata o nome do curso para exibição (ex: "curso_excel_basico" -> "Curso excel basico")
             let displayName = cursoValue.replace(/_/g, ' ');
             displayName = displayName.split(' ').map((word, index) => {
                 return (index === 0) ? capitalizeFirstLetter(word) : word;
             }).join(' ');
             
-            document.getElementById("curso").value = cursoValue;
+            document.getElementById("curso").value = cursoValue; // Salva o valor original para o App Script
             courseLabel.textContent = `Sua Avaliação do Curso: ${displayName}`;
         } else {
             courseLabel.textContent = "Sua Avaliação do Curso:";
@@ -241,6 +242,7 @@
         
         // Caso 1: Status "iniciado"
         if (statusValue && statusValue.toLowerCase() === "iniciado") {
+            // Oculta a avaliação e exige apenas Nome/Email
             ratingSection.style.display = 'none';
             notaInputs.forEach(input => {
                 input.removeAttribute('required');
@@ -248,6 +250,7 @@
             submitButton.textContent = 'Iniciar Curso'; 
         } else {
             // Caso 2: Conclusão
+            // Mantém a avaliação visível e obrigatória
             ratingSection.style.display = 'block';
             notaInputs.forEach(input => {
                 input.setAttribute('required', 'required');
@@ -258,92 +261,3 @@
         // --- Função para buscar a URL do curso (GET) ---
         async function fetchCourseUrl(courseCode) {
             const fetchUrl = `${SCRIPT_URL}?action=geturl&curso=${courseCode}`;
-
-            try {
-                const response = await fetch(fetchUrl);
-                if (!response.ok) throw new Error('Falha ao buscar URL.');
-                const urlData = await response.text();
-                return urlData.trim();
-            } catch (error) {
-                console.error("Erro ao buscar URL do curso:", error);
-                // URL Fallback
-                return "https://sousaandrade.sharepoint.com/"; 
-            }
-        }
-        
-        // --- 3. LÓGICA DE SUBMISSÃO (POST + GET) ---
-        form.addEventListener('submit', async function(e) { 
-            e.preventDefault(); 
-            
-            submitButton.textContent = 'Aguarde...';
-            submitButton.disabled = true;
-
-            const formData = new FormData(form);
-
-            try {
-                // 1. Envia os dados do formulário (POST)
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.text();
-                
-                if (data.trim() === 'REGISTRO_OK') {
-                    
-                    // 2. Busca a URL Dinâmica (GET)
-                    const finalRedirectUrl = await fetchCourseUrl(cursoValue);
-
-                    // Se for "iniciado", redireciona com contagem
-                    if (statusValue && statusValue.toLowerCase() === "iniciado") {
-                        
-                        mainBox.classList.add('hidden');
-                        successBox.classList.remove('hidden');
-                        successBox.classList.add('redirect-box');
-                        finalMessageTitle.textContent = 'Iniciando o Curso...';
-                        redirectLink.classList.add('hidden');
-                        
-                        let countdown = 5;
-                        successMessage.innerHTML = `Aguarde, seu curso começará em alguns instantes. Redirecionando em <span id="countdown">${countdown}</span> segundos.`;
-
-                        const countdownElement = document.getElementById("countdown");
-
-                        const interval = setInterval(() => {
-                            countdown--;
-                            if (countdownElement) countdownElement.textContent = countdown;
-                            
-                            if (countdown <= 0) {
-                                clearInterval(interval);
-                                window.top.location.href = finalRedirectUrl;
-                            }
-                        }, 1000);
-
-                    } else { 
-                        // Se for Conclusão, atualiza o link e mostra a mensagem de sucesso
-                        redirectLink.href = finalRedirectUrl;
-                        mainBox.classList.add('hidden');
-                        successBox.classList.remove('hidden');
-                        successBox.classList.remove('redirect-box');
-                        finalMessageTitle.textContent = '🎉 Curso Conluído!!!';
-                        successMessage.textContent = 'Obrigado! Sua avaliação foi registrada com sucesso.';
-                        redirectLink.classList.remove('hidden');
-
-                    }
-                } else {
-                    console.error('Houve um erro no registro ou resposta inesperada:', data.trim());
-                    const btnText = (statusValue && statusValue.toLowerCase() === "iniciado") ? 'Iniciar Curso' : 'Concluir';
-                    submitButton.textContent = btnText;
-                    submitButton.disabled = false;
-                }
-            } catch(error) {
-                console.error('Erro na submissão ou busca da URL:', error);
-                const btnText = (statusValue && statusValue.toLowerCase() === "iniciado") ? 'Iniciar Curso' : 'Concluir';
-                submitButton.textContent = btnText;
-                submitButton.disabled = false;
-            }
-        });
-
-    });
-</script>
-
-</body>
-</html>
