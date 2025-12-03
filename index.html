@@ -198,7 +198,7 @@
 
         <input type="hidden" name="status" id="status">
         
-        <button type="submit">Concluir</button>
+        <button type="submit" id="submitButton">Concluir</button>
     </form>
 </div>
 
@@ -216,6 +216,7 @@
         const finalMessageTitle = document.getElementById("final-message-title");
         const successMessage = document.getElementById("success-message");
         const redirectLink = document.querySelector(".button-link");
+        const submitButton = document.getElementById("submitButton"); // Pego o botão por ID
 
         const SCRIPT_URL = document.getElementById("scriptUrl").value;
         const REDIRECT_YOUTUBE = "https://www.youtube.com/"; // URL para onde redirecionar
@@ -238,7 +239,6 @@
             
             document.getElementById("curso").value = cursoValue;
             courseLabel.textContent = `Sua Avaliação do Curso: ${displayName}`;
-            console.log("Curso lido e formatado:", displayName);
         } else {
             courseLabel.textContent = "Sua Avaliação do Curso:";
             console.warn("Parâmetro 'curso' ausente na URL.");
@@ -251,21 +251,19 @@
         // Verifica se o status é "iniciado" (caso 1)
         if (statusValue && statusValue.toLowerCase() === "iniciado") {
             
-            // Se for "iniciado", não precisa da avaliação, mas precisa enviar (ou redirecionar)
+            // 1. Oculta a avaliação
             ratingSection.style.display = 'none';
-            console.log("Status 'iniciado' detectado. Avaliação ocultada.");
 
-            // Remove o 'required' para permitir o envio do formulário sem nota
+            // 2. Remove o 'required' da nota (já que não vai ser enviada)
             notaInputs.forEach(input => {
                 input.removeAttribute('required');
             });
+
+            // 3. Altera o texto do botão para "Iniciar Curso"
+            submitButton.textContent = 'Iniciar Curso'; 
             
-            // Se for "iniciado", forçamos o clique no botão para iniciar o fluxo.
-            // Isso garante que o fetch/redirecionamento ocorra automaticamente.
-            // Usamos setTimeout para garantir que o DOM esteja totalmente pronto
-            setTimeout(() => {
-                form.dispatchEvent(new Event('submit'));
-            }, 100);
+            // REMOVIDO: O código que forçava a submissão automática.
+            // O usuário deve preencher nome/email e clicar no botão.
 
         } else {
             // Para status vazio ou qualquer outro valor (caso 2 - Conclusão), a avaliação é visível
@@ -273,15 +271,13 @@
             notaInputs.forEach(input => {
                 input.setAttribute('required', 'required');
             });
-            console.log("Status não é 'iniciado'. Avaliação visível.");
+            submitButton.textContent = 'Concluir';
         }
 
 
         // --- 3. LÓGICA DE SUBMISSÃO COM FETCH ---
         form.addEventListener('submit', function(e) {
             e.preventDefault(); 
-            
-            const submitButton = form.querySelector('button[type="submit"]');
             
             // Exibe feedback visual de envio
             submitButton.textContent = 'Aguarde...';
@@ -329,8 +325,8 @@
 
                     } else {
                         // Trata erros de registro
-                        alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
-                        submitButton.textContent = 'Concluir';
+                        // alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
+                        submitButton.textContent = 'Iniciar Curso'; // Volta o texto do botão
                         submitButton.disabled = false;
                     }
 
@@ -346,7 +342,7 @@
                         redirectLink.classList.remove('hidden');
                     } else {
                         // Trata erros de registro
-                        alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
+                        // alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
                         submitButton.textContent = 'Concluir';
                         submitButton.disabled = false;
                     }
@@ -354,8 +350,8 @@
             })
             .catch(error => {
                 console.error('Erro na submissão:', error);
-                alert('Erro na conexão. Verifique sua URL do App Script e a conexão de rede.');
-                submitButton.textContent = 'Concluir';
+                // alert('Erro na conexão. Verifique sua URL do App Script e a conexão de rede.');
+                submitButton.textContent = (statusValue && statusValue.toLowerCase() === "iniciado") ? 'Iniciar Curso' : 'Concluir';
                 submitButton.disabled = false;
             });
         });
