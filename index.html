@@ -32,7 +32,6 @@
         cursor: pointer;
         padding: 0 5px;
         transition: color 0.2s, transform 0.2s;
-        /* Adicionado para posicionar o ícone de check corretamente */
         position: relative; 
     }
 
@@ -55,19 +54,19 @@
         color: #ff9800;
     }
 
-    /* --- NOVO ESTILO PARA O CHECK DE SELEÇÃO --- */
+    /* Estilo para o check de seleção */
     .rating-box input[type="radio"]:checked + label::after {
-        content: '\2713'; /* Símbolo Unicode para checkmark (✓) */
+        content: '\2713'; 
         position: absolute;
-        bottom: -15px; /* Deslocamento para baixo */
+        bottom: -15px;
         left: 50%;
-        transform: translateX(-50%); /* Centraliza */
-        background-color: #28a745; /* Fundo verde */
+        transform: translateX(-50%);
+        background-color: #28a745;
         color: white;
         font-size: 14px;
         line-height: 1;
         padding: 3px 6px;
-        border-radius: 50%; /* Formato de círculo */
+        border-radius: 50%;
         z-index: 10;
         box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
@@ -83,22 +82,24 @@
         <input type="email" name="email" placeholder="Seu email" required>
         <input type="hidden" name="curso" id="curso">
         
-        <label id="course-label" style="margin-top: 15px; display: block;">Sua Avaliação do Curso:</label>
-        <div class="rating-box">
-            <input type="radio" id="star5" name="nota" value="5" required />
-            <label for="star5" title="Excelente (5)"></label>
+        <div id="rating-section"> 
+            <label id="course-label" style="margin-top: 15px; display: block;">Sua Avaliação do Curso:</label>
+            <div class="rating-box">
+                <input type="radio" id="star5" name="nota" value="5" required />
+                <label for="star5" title="Excelente (5)"></label>
 
-            <input type="radio" id="star4" name="nota" value="4" />
-            <label for="star4" title="Bom (4)"></label>
+                <input type="radio" id="star4" name="nota" value="4" />
+                <label for="star4" title="Bom (4)"></label>
 
-            <input type="radio" id="star3" name="nota" value="3" />
-            <label for="star3" title="Razoável (3)"></label>
+                <input type="radio" id="star3" name="nota" value="3" />
+                <label for="star3" title="Razoável (3)"></label>
 
-            <input type="radio" id="star2" name="nota" value="2" />
-            <label for="star2" title="Ruim (2)"></label>
+                <input type="radio" id="star2" name="nota" value="2" />
+                <label for="star2" title="Ruim (2)"></label>
 
-            <input type="radio" id="star1" name="nota" value="1" />
-            <label for="star1" title="Muito Ruim (1)"></label>
+                <input type="radio" id="star1" name="nota" value="1" />
+                <label for="star1" title="Muito Ruim (1)"></label>
+            </div>
         </div>
 
         <input type="hidden" name="status" id="status">
@@ -111,7 +112,9 @@
     // Usa o objeto URLSearchParams para ler os parâmetros
     const p = new URLSearchParams(window.location.search);
     const courseLabel = document.getElementById("course-label");
-
+    const ratingSection = document.getElementById("rating-section"); 
+    const notaInputs = document.querySelectorAll('input[name="nota"]');
+    
     // --- Função Simples de Capitalização ---
     function capitalizeFirstLetter(string) {
         if (!string) return '';
@@ -130,7 +133,6 @@
         }).join(' ');
         
         document.getElementById("curso").value = cursoValue;
-        
         courseLabel.textContent = `Sua Avaliação do Curso: ${displayName}`;
         console.log("Curso lido e formatado para exibição:", displayName);
     } else {
@@ -138,12 +140,34 @@
         console.warn("Parâmetro 'curso' ausente na URL. Usando texto padrão.");
     }
 
-    // --- 2. Lógica para o Status ---
+    // --- 2. Lógica para o Status e Avaliação ---
     const statusValue = p.get("status");
-    if (statusValue) {
-        document.getElementById("status").value = statusValue;
-        console.log("Status lido da URL:", statusValue);
+    document.getElementById("status").value = statusValue || "";
+
+    // Se o status for "iniciado" (case-insensitive)
+    if (statusValue && statusValue.toLowerCase() === "iniciado") {
+        
+        // Esconde toda a seção de avaliação
+        ratingSection.style.display = 'none';
+        console.log("Status 'iniciado' detectado. Avaliação ocultada.");
+
+        // Remove o atributo 'required' dos inputs de nota para permitir a submissão
+        notaInputs.forEach(input => {
+            input.removeAttribute('required');
+        });
+
+    } else {
+        // Para status vazio ou qualquer outro valor, a avaliação permanece visível
+        ratingSection.style.display = 'block';
+        console.log("Status não é 'iniciado' ou está ausente. Avaliação visível.");
+
+        // Garante que o atributo 'required' esteja presente
+        notaInputs.forEach(input => {
+            input.setAttribute('required', 'required');
+        });
     }
+
+    console.log("Status final lido da URL:", statusValue);
 </script>
 
 </body>
