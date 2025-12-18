@@ -1,0 +1,96 @@
+<script>
+    /* ============================================================
+       CONFIGURAÇÕES DO CURSO (Altere os valores abaixo)
+       ============================================================ */
+    
+    // 1. Nome do Identificador do Curso (ex: "TrabalhoRemoto", "Lideranca", "Excel")
+    const NOME_DO_CURSO = "TrabalhoRemoto";
+
+    // 2. Status da Página: 
+    // Use "iniciado" para a página de leitura (com cronômetro)
+    // Use "completo" para a página de avaliação final
+    const STATUS_DA_PAGINA = "iniciado"; 
+
+    /* ============================================================
+       FIM DAS CONFIGURAÇÕES (Não mexer abaixo desta linha)
+       ============================================================ */
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Agora os valores vêm das variáveis acima, não mais da URL
+        const statusValue = STATUS_DA_PAGINA.toLowerCase();
+        const cursoValue = NOME_DO_CURSO;
+
+        const form = document.getElementById("submissionForm");
+        const ratingSection = document.getElementById("rating-section"); 
+        
+        // Link do PDF (Pode ser movido para as configurações acima se cada curso tiver um PDF diferente)
+        const EMBED_PDF_URL = "https://sousaandrade-my.sharepoint.com/personal/bruno_santos_sousaandrade_com_br/_layouts/15/embed.aspx?UniqueId=8421f155-cfad-4a15-8f24-162332d76d06";
+
+        // Aplica o nome do curso e status nos campos ocultos do formulário
+        document.getElementById("curso").value = cursoValue;
+        document.getElementById("status").value = statusValue;
+
+        // Atualiza o link do botão de retorno dinamicamente com base no curso definido
+        const backBtn = document.getElementById("back-button");
+        backBtn.href = `https://sousaandradeti.github.io/cursos/menu.html?curso=${cursoValue}&status=completo`;
+
+        if (statusValue === "iniciado") {
+            ratingSection.classList.add('hidden');
+            document.querySelectorAll('input[name="nota"]').forEach(i => i.removeAttribute('required'));
+            document.getElementById("submitButton").textContent = 'Iniciar Curso';
+        }
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submitButton");
+            submitBtn.textContent = 'Registrando...';
+            submitBtn.disabled = true;
+
+            fetch(document.getElementById("scriptUrl").value, { method: 'POST', body: new FormData(form) })
+            .then(res => res.text())
+            .then(data => {
+                if (data.trim() === 'REGISTRO_OK') {
+                    document.getElementById("mainBox").classList.add('hidden');
+                    const successBox = document.getElementById("successBox");
+                    successBox.classList.remove('hidden');
+
+                    if (statusValue === "iniciado") {
+                        document.getElementById("final-message-title").textContent = 'Acesso Liberado!';
+                        let startCountdown = 3;
+                        const msg = document.getElementById("success-message");
+                        
+                        const timer = setInterval(() => {
+                            msg.innerHTML = `O material será exibido em breve...`;
+                            if (startCountdown <= 0) {
+                                clearInterval(timer);
+                                msg.innerHTML = "Boa leitura! O botão de conclusão será liberado após a leitura mínima obrigatória.";
+                                
+                                successBox.style.maxWidth = '1000px'; 
+                                successBox.style.width = '95%';
+                                
+                                const pdfCont = document.getElementById("pdf-container");
+                                pdfCont.classList.remove('hidden');
+                                pdfCont.innerHTML = `<iframe src="${EMBED_PDF_URL}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+                                
+                                backBtn.classList.remove('hidden');
+
+                                // Temporizador de 120 segundos
+                                setTimeout(() => {
+                                    backBtn.textContent = "Concluir e Avaliar";
+                                    backBtn.classList.remove('disabled');
+                                }, 120000); 
+                            }
+                            startCountdown--;
+                        }, 1000);
+                    } else {
+                        document.getElementById("final-message-title").textContent = '🎉 Concluído!';
+                        document.getElementById("success-message").textContent = 'Sua avaliação foi registrada.';
+                        backBtn.classList.remove('hidden', 'disabled');
+                        backBtn.textContent = "Voltar ao Início";
+                        backBtn.href = "https://sousaandrade.sharepoint.com/"; 
+                    }
+                }
+            });
+        });
+    });
+</script>
