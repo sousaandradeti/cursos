@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Acesso ao Curso - Sousa Andrade Academy</title>
+
+<style>
+    body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; transition: all 0.5s ease; }
+    
+    .box { 
+        background:white; 
+        max-width:400px; 
+        margin:auto; 
+        padding: 30px 40px;
+        border-radius:10px; 
+        box-shadow:0 0 15px #00000025;
+        box-sizing: border-box;
+        transition: max-width 0.5s ease, width 0.5s ease;
+    }
+    
+    h2 { text-align:center; margin-bottom: 25px; }
+    
+    input[type="text"], input[type="email"], button {
+        width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; 
+        font-size: 16px; border: 1px solid #ccc; box-sizing: border-box;
+    }
+    
+    button { 
+        background:#0176ff; color:white; cursor:pointer; border:none;
+        padding: 14px; margin-top: 20px; font-weight: bold; transition: background 0.2s;
+    }
+    button:hover:not(:disabled) { background:#005ad1; }
+    
+    /* Botão desabilitado */
+    button:disabled, .button-link.disabled {
+        background: #ccc !important;
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Estilos da Avaliação */
+    .rating-box { display: flex; justify-content: space-between; direction: rtl; margin: 15px 0 25px 0; }
+    .rating-box input[type="radio"] { display: none; }
+    .rating-box label { font-size: 40px; color: #ccc; cursor: pointer; position: relative; min-width: 45px; text-align: center; }
+    .rating-box label[for="star5"]::before { content: '😀'; }
+    .rating-box label[for="star4"]::before { content: '🙂'; }
+    .rating-box label[for="star3"]::before { content: '😐'; }
+    .rating-box label[for="star2"]::before { content: '🙁'; }
+    .rating-box label[for="star1"]::before { content: '😡'; } 
+
+    .rating-box input[type="radio"]:checked + label::after {
+        content: '\2713'; position: absolute; bottom: -15px; left: 50%;
+        transform: translateX(-50%); background-color: #28a745;
+        color: white; font-size: 14px; padding: 3px 6px; border-radius: 50%;
+    }
+    
+    .success-box { text-align: center; }
+    
+    /* Container do Vídeo Responsivo (Mantém 16:9) */
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%; /* Proporção de tela 16 por 9 */
+        height: 0;
+        overflow: hidden;
+        margin-top: 20px;
+        border-radius: 8px;
+        background: #000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .button-link {
+        display: inline-block; width: 100%; padding: 14px; border-radius: 6px;
+        font-size: 16px; font-weight: bold; text-align: center; text-decoration: none;
+        background:#0176ff; color:white; margin-top: 20px; box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+
+<div class="box success-box hidden" id="successBox">
+    <h2 id="final-message-title">Processando...</h2>
+    <p id="success-message"></p>
+    
+    <div id="media-container" class="hidden"></div>
+    
+    <a href="https://sousaandradeti.github.io/cursos/?curso=TrabalhoRemoto&status=completo" id="back-button" class="button-link hidden disabled">Aguarde...</a>
+</div>
+
+<div class="box main-box" id="mainBox">
+    <h2>Sousa Andrade Academy</h2>
+    <form id="submissionForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
+        
+        <input type="text" name="nome" placeholder="Seu nome" required>
+        <input type="email" name="email" placeholder="Seu email" required>
+        <input type="hidden" name="curso" id="curso">
+        
+        <div id="rating-section"> 
+            <label id="course-label" style="margin-bottom: 10px; display: block; font-weight: bold;">Avaliação do Curso:</label>
+            <div class="rating-box">
+                <input type="radio" id="star5" name="nota" value="5" required />
+                <label for="star5"></label>
+                <input type="radio" id="star4" name="nota" value="4" />
+                <label for="star4"></label>
+                <input type="radio" id="star3" name="nota" value="3" />
+                <label for="star3"></label>
+                <input type="radio" id="star2" name="nota" value="2" />
+                <label for="star2"></label>
+                <input type="radio" id="star1" name="nota" value="1" />
+                <label for="star1"></label>
+            </div>
+        </div>
+
+        <input type="hidden" name="status" id="status">
+        <button type="submit" id="submitButton">Enviar e Iniciar Aula</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const p = new URLSearchParams(window.location.search);
+        const form = document.getElementById("submissionForm");
+        const ratingSection = document.getElementById("rating-section"); 
+        const statusValue = (p.get("status") || "").toLowerCase();
+        const cursoValue = p.get("curso");
+
+        // URL DE INCORPORAÇÃO COM AUTOPLAY
+        const EMBED_URL = "https://www.youtube.com/embed/xQf53cj33PY?autoplay=1&rel=0";
+
+        // CONFIGURAÇÃO INICIAL
+        if (statusValue === "iniciado") {
+            ratingSection.classList.add('hidden');
+            document.querySelectorAll('input[name="nota"]').forEach(i => i.removeAttribute('required'));
+            document.getElementById("submitButton").textContent = 'Iniciar Vídeo Aula';
+        }
+
+        if (cursoValue) document.getElementById("curso").value = cursoValue;
+        document.getElementById("status").value = statusValue;
+
+        // SUBMISSÃO
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submitButton");
+            submitBtn.textContent = 'Registrando...';
+            submitBtn.disabled = true;
+
+            fetch(document.getElementById("scriptUrl").value, { method: 'POST', body: new FormData(form) })
+            .then(res => res.text())
+            .then(data => {
+                if (data.trim() === 'REGISTRO_OK') {
+                    document.getElementById("mainBox").classList.add('hidden');
+                    const successBox = document.getElementById("successBox");
+                    successBox.classList.remove('hidden');
+
+                    if (statusValue === "iniciado") {
+                        document.getElementById("final-message-title").textContent = 'Aula Liberada!';
+                        let startCountdown = 3;
+                        const msg = document.getElementById("success-message");
+                        
+                        const timer = setInterval(() => {
+                            msg.innerHTML = `O vídeo será carregado em instantes...`;
+                            if (startCountdown <= 0) {
+                                clearInterval(timer);
+                                msg.innerHTML = "Assista à aula. O botão de conclusão será liberado após o tempo mínimo.";
+                                
+                                // EXPANSÃO DA CAIXA PARA O PLAYER
+                                successBox.style.maxWidth = '900px'; 
+                                successBox.style.width = '95%';
+                                
+                                const mediaCont = document.getElementById("media-container");
+                                mediaCont.classList.remove('hidden');
+                                mediaCont.className = "video-container"; 
+                                mediaCont.innerHTML = `<iframe src="${EMBED_URL}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+                                
+                                const backBtn = document.getElementById("back-button");
+                                backBtn.classList.remove('hidden');
+
+                                // TEMPORIZADOR DE 120 SEGUNDOS (SEM MOSTRAR CONTAGEM)
+                                setTimeout(() => {
+                                    backBtn.textContent = "Concluir Aula e Avaliar";
+                                    backBtn.classList.remove('disabled');
+                                }, 120000); 
+                            }
+                            startCountdown--;
+                        }, 1000);
+                    } else {
+                        document.getElementById("final-message-title").textContent = '🎉 Concluído!';
+                        document.getElementById("success-message").textContent = 'Sua participação e avaliação foram registradas.';
+                        const backBtn = document.getElementById("back-button");
+                        backBtn.classList.remove('hidden', 'disabled');
+                        backBtn.textContent = "Voltar ao Início";
+                        backBtn.href = "https://sousaandrade.sharepoint.com/";
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>
