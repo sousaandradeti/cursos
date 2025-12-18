@@ -15,7 +15,7 @@
         border-radius:10px; 
         box-shadow:0 0 15px #00000025;
         box-sizing: border-box;
-        transition: max-width 0.5s ease;
+        transition: max-width 0.5s ease, width 0.5s ease;
     }
     
     h2 { text-align:center; margin-bottom: 25px; }
@@ -27,19 +27,23 @@
     
     button { 
         background:#0176ff; color:white; cursor:pointer; border:none;
-        padding: 14px; margin-top: 20px; font-weight: bold;
+        padding: 14px; margin-top: 20px; font-weight: bold; transition: background 0.2s;
     }
+    button:hover { background:#005ad1; }
     
+    /* Classe para esconder elementos com prioridade */
     .hidden { display: none !important; }
 
+    /* Estilos da Avaliação */
     .rating-box { display: flex; justify-content: space-between; direction: rtl; margin: 15px 0 25px 0; }
     .rating-box input[type="radio"] { display: none; }
-    .rating-box label { font-size: 40px; color: #ccc; cursor: pointer; position: relative; min-width: 45px; text-align: center; }
+    .rating-box label { font-size: 40px; color: #ccc; cursor: pointer; position: relative; min-width: 45px; text-align: center; transition: transform 0.2s; }
     .rating-box label[for="star5"]::before { content: '😀'; }
     .rating-box label[for="star4"]::before { content: '🙂'; }
     .rating-box label[for="star3"]::before { content: '😐'; }
     .rating-box label[for="star2"]::before { content: '🙁'; }
     .rating-box label[for="star1"]::before { content: '😡'; } 
+    .rating-box label:hover { transform: scale(1.1); }
 
     .rating-box input[type="radio"]:checked + label::after {
         content: '\2713'; position: absolute; bottom: -15px; left: 50%;
@@ -47,26 +51,26 @@
         color: white; font-size: 14px; padding: 3px 6px; border-radius: 50%;
     }
     
-    .success-box { text-align: center; padding: 40px !important; }
-    #pdf-container { width: 100%; height: 700px; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; }
+    .success-box { text-align: center; }
+    #pdf-container { width: 100%; height: 750px; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; background: #eee; }
 
     .button-link {
         display: inline-block; width: 100%; padding: 14px; border-radius: 6px;
         font-size: 16px; font-weight: bold; text-align: center; text-decoration: none;
-        background:#0176ff; color:white; margin-top: 20px;
+        background:#0176ff; color:white; margin-top: 20px; box-sizing: border-box;
     }
 </style>
 </head>
 <body>
 
-<div class="box success-box hidden">
-    <h2 id="final-message-title">Aguarde...</h2>
+<div class="box success-box hidden" id="successBox">
+    <h2 id="final-message-title">Processando...</h2>
     <p id="success-message"></p>
     <div id="pdf-container" class="hidden"></div>
     <a href="https://sousaandrade.sharepoint.com/" id="back-button" class="button-link hidden">Voltar para o Início</a>
 </div>
 
-<div class="box main-box">
+<div class="box main-box" id="mainBox">
     <h2>Sousa Andrade Academy</h2>
     <form id="submissionForm">
         <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
@@ -76,18 +80,18 @@
         <input type="hidden" name="curso" id="curso">
         
         <div id="rating-section"> 
-            <label id="course-label" style="margin-bottom: 10px; display: block;">Sua Avaliação:</label>
+            <label id="course-label" style="margin-bottom: 10px; display: block; font-weight: bold;">Sua Avaliação do Curso:</label>
             <div class="rating-box">
                 <input type="radio" id="star5" name="nota" value="5" required />
-                <label for="star5"></label>
+                <label for="star5" title="Excelente"></label>
                 <input type="radio" id="star4" name="nota" value="4" />
-                <label for="star4"></label>
+                <label for="star4" title="Bom"></label>
                 <input type="radio" id="star3" name="nota" value="3" />
-                <label for="star3"></label>
+                <label for="star3" title="Razoável"></label>
                 <input type="radio" id="star2" name="nota" value="2" />
-                <label for="star2"></label>
+                <label for="star2" title="Ruim"></label>
                 <input type="radio" id="star1" name="nota" value="1" />
-                <label for="star1"></label>
+                <label for="star1" title="Muito Ruim"></label>
             </div>
         </div>
 
@@ -104,27 +108,30 @@
         const statusValue = (p.get("status") || "").toLowerCase();
         const cursoValue = p.get("curso");
 
-        // 1. Lógica rigorosa de exibição da Avaliação
+        // URL DE INCORPORAÇÃO (EMBED) DO SHAREPOINT
+        const EMBED_PDF_URL = "https://sousaandrade-my.sharepoint.com/personal/bruno_santos_sousaandrade_com_br/_layouts/15/embed.aspx?UniqueId=8421f155-cfad-4a15-8f24-162332d76d06";
+
+        // CONFIGURAÇÃO INICIAL BASEADA NO STATUS
         if (statusValue === "iniciado") {
-            ratingSection.classList.add('hidden'); // Esconde usando a classe !important
+            ratingSection.classList.add('hidden'); // Oculta avaliação
             document.querySelectorAll('input[name="nota"]').forEach(i => i.removeAttribute('required'));
             document.getElementById("submitButton").textContent = 'Iniciar Curso';
         } else {
             ratingSection.classList.remove('hidden');
-            document.getElementById("submitButton").textContent = 'Concluir';
+            document.getElementById("submitButton").textContent = 'Concluir Avaliação';
         }
 
         if (cursoValue) {
             document.getElementById("curso").value = cursoValue;
-            document.getElementById("course-label").textContent = `Avaliação do Curso: ${cursoValue.replace(/_/g, ' ')}`;
+            document.getElementById("course-label").textContent = `Avaliação: ${cursoValue.replace(/_/g, ' ')}`;
         }
         document.getElementById("status").value = statusValue;
 
-        // 2. Submissão
+        // SUBMISSÃO DO FORMULÁRIO
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const submitBtn = document.getElementById("submitButton");
-            submitBtn.textContent = 'Processando...';
+            submitBtn.textContent = 'Registrando...';
             submitBtn.disabled = true;
 
             const scriptUrl = document.getElementById("scriptUrl").value;
@@ -133,41 +140,47 @@
             .then(res => res.text())
             .then(data => {
                 if (data.trim() === 'REGISTRO_OK') {
-                    document.querySelector(".main-box").classList.add('hidden');
-                    const successBox = document.querySelector(".success-box");
+                    document.getElementById("mainBox").classList.add('hidden');
+                    const successBox = document.getElementById("successBox");
                     successBox.classList.remove('hidden');
 
                     if (statusValue === "iniciado") {
-                        document.getElementById("final-message-title").textContent = 'Curso Liberado!';
+                        document.getElementById("final-message-title").textContent = 'Acesso Liberado!';
                         let countdown = 3;
                         const msg = document.getElementById("success-message");
                         
                         const timer = setInterval(() => {
-                            msg.innerHTML = `O material será exibido abaixo em ${countdown}...`;
+                            msg.innerHTML = `O fascículo será exibido em ${countdown} segundos...`;
                             if (countdown <= 0) {
                                 clearInterval(timer);
-                                msg.innerHTML = "Boa leitura! Clique no botão abaixo quando terminar.";
-                                // Ajusta visual para o PDF
-                                successBox.style.maxWidth = '95%';
+                                msg.innerHTML = "Boa leitura! Use o botão abaixo ao finalizar.";
+                                
+                                // EXPANSÃO DA TELA PARA O PDF
+                                successBox.style.maxWidth = '1000px'; 
                                 successBox.style.width = '95%';
+                                
                                 const pdfCont = document.getElementById("pdf-container");
                                 pdfCont.classList.remove('hidden');
-                                // URL com parâmetro embed para o SharePoint aceitar o frame
-                                const finalPdfUrl = "https://sousaandrade-my.sharepoint.com/:b:/g/personal/bruno_santos_sousaandrade_com_br/IQBV8SGErc8VSo8kFiMy120GAbUaKmo7F_hEQJzcX1fQHRc?e=YMw4kf&action=embedview";
-                                pdfCont.innerHTML = `<iframe src="${finalPdfUrl}" width="100%" height="700px" frameborder="0"></iframe>`;
-                                document.getElementById("back-button").classList.remove('hidden');
+                                pdfCont.innerHTML = `<iframe src="${EMBED_PDF_URL}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+                                
+                                const backBtn = document.getElementById("back-button");
+                                backBtn.classList.remove('hidden');
+                                backBtn.textContent = "Concluir e Voltar";
                             }
                             countdown--;
                         }, 1000);
                     } else {
                         document.getElementById("final-message-title").textContent = '🎉 Concluído!';
-                        document.getElementById("success-message").textContent = 'Avaliação enviada com sucesso.';
+                        document.getElementById("success-message").textContent = 'Sua participação e avaliação foram registradas com sucesso.';
                         document.getElementById("back-button").classList.remove('hidden');
                     }
+                } else {
+                    alert("Erro ao registrar no banco de dados.");
+                    submitBtn.disabled = false;
                 }
             })
             .catch(err => {
-                alert("Erro na conexão.");
+                alert("Erro de conexão com o servidor.");
                 submitBtn.disabled = false;
             });
         });
