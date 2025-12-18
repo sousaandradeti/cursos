@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Confirmação de Curso</title>
+
+<style>
+    /* Estilos de Layout Base */
+    body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; }
+    
+    .box { 
+        background:white; 
+        max-width:400px; 
+        margin:auto; 
+        /* AUMENTO DO PREENCHIMENTO (PADDING) INTERNO */
+        padding: 30px 40px; /* 30px superior/inferior, 40px lateral */
+        border-radius:10px; 
+        box-shadow:0 0 15px #00000025;
+        box-sizing: border-box; /* Garante que o padding não estoure o max-width */
+    }
+    
+    h2 { 
+        text-align:center; 
+        margin-bottom: 25px; 
+    }
+    
+    /* Estilo para campos de input e botão */
+    input[type="text"], input[type="email"], button {
+        width: 100%; 
+        padding: 12px; 
+        margin-top: 0; 
+        margin-bottom: 15px; 
+        border-radius: 6px; 
+        font-size: 16px;
+        border: 1px solid #ccc; 
+        box-sizing: border-box;
+    }
+    
+    button { 
+        background:#0176ff; 
+        color:white; 
+        cursor:pointer; 
+        border:none;
+        padding: 14px; 
+        margin-top: 20px; 
+        font-weight: bold;
+        transition: background-color 0.2s;
+    }
+    
+    button:hover { 
+        background:#005ad1; 
+    }
+    
+    .hidden {
+        display: none !important;
+    }
+
+    /* --- Estilos para o Seletor de Emojis (Rating) --- */
+    .rating-box {
+        display: flex;
+        justify-content: space-between; 
+        direction: rtl; 
+        margin: 15px 0 25px 0;
+    }
+
+    .rating-box input[type="radio"] {
+        display: none;
+    }
+
+    .rating-box label {
+        font-size: 40px;
+        color: #ccc; 
+        cursor: pointer;
+        padding: 0 2px;
+        transition: color 0.2s, transform 0.2s;
+        position: relative; 
+        min-width: 45px; 
+        text-align: center;
+    }
+
+    /* Define os emojis para cada ponto */
+    .rating-box label[for="star5"]::before { content: '😀'; }
+    .rating-box label[for="star4"]::before { content: '🙂'; }
+    .rating-box label[for="star3"]::before { content: '😐'; }
+    .rating-box label[for="star2"]::before { content: '🙁'; }
+    .rating-box label[for="star1"]::before { content: '😡'; } 
+
+    /* Efeito de hover e seleção */
+    .rating-box label:hover,
+    .rating-box label:hover ~ label,
+    .rating-box input[type="radio"]:checked ~ label {
+        color: #ffc107;
+        transform: scale(1.1);
+    }
+
+    .rating-box input[type="radio"]:checked + label {
+        color: #ff9800;
+    }
+
+    /* Estilo para o check de seleção */
+    .rating-box input[type="radio"]:checked + label::after {
+        content: '\2713'; 
+        position: absolute;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #28a745;
+        color: white;
+        font-size: 14px;
+        line-height: 1;
+        padding: 3px 6px;
+        border-radius: 50%;
+        z-index: 10;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+    
+    /* --- Estilos para a Mensagem de Sucesso e irecionamento --- */
+    .success-box {
+        text-align: center;
+        /* Padding ajustado para a tela de sucesso */
+        padding: 50px 40px !important; 
+    }
+    .success-box h2 {
+        color: #28a745; 
+        margin-bottom: 10px;
+    }
+    .success-box p {
+        margin-bottom: 25px;
+        color: #555;
+    }
+    /* Novo estilo para a tela de irecionamento imediato */
+    .irect-box h2 {
+        color: #0176ff;
+    }
+
+    .button-link {
+        display: inline-block;
+        width: 100%;
+        padding: 14px; /* Usa o mesmo padding do botão */
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        text-decoration: none;
+        background:#0176ff; 
+        color:white; 
+        transition: background-color 0.2s;
+    }
+    .button-link:hover {
+        background: #005ad1;
+    }
+</style>
+</head>
+<body>
+
+<!-- Caixa de Mensagem de Sucesso (Oculta por padrão) -->
+<div class="box success-box hidden">
+    <h2 id="final-message-title">🎉 Avaliação Enviada!</h2>
+    <p id="success-message">Obrigado! Sua avaliação foi registrada com sucesso.</p>
+    
+    <!-- Botão de irecionamento para o YouTube (usado apenas na conclusão) -->
+    <a href="https://sousaandrade.sharepoint.com/" target="_blank" class="button-link">Voltar para o Início</a>
+</div>
+
+<!-- Caixa Principal do Formulário -->
+<div class="box main-box">
+    <h2>Cursos Sousa Andrade Academy</h2>
+
+    <!-- O action foi removido e o ID foi adicionado para o envio via fetch -->
+    <form id="submissionForm">
+        <!-- Substitua o URL do Google App Script abaixo pelo seu URL de execução real -->
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
+        
+        <input type="text" name="nome" placeholder="Seu nome" required>
+        <input type="email" name="email" placeholder="Seu email" required>
+        <input type="hidden" name="curso" id="curso">
+        
+        <!-- SEÇÃO DE AVALIAÇÃO COM ID PARA CONTROLE DE VISIBILIDADE -->
+        <div id="rating-section"> 
+            <label id="course-label" style="margin-top: 0; margin-bottom: 10px; display: block;">Sua Avaliação do Curso:</label>
+            <div class="rating-box">
+                <input type="radio" id="star5" name="nota" value="5" required />
+                <label for="star5" title="Excelente (5)"></label>
+
+                <input type="radio" id="star4" name="nota" value="4" />
+                <label for="star4" title="Bom (4)"></label>
+
+                <input type="radio" id="star3" name="nota" value="3" />
+                <label for="star3" title="Razoável (3)"></label>
+
+                <input type="radio" id="star2" name="nota" value="2" />
+                <label for="star2" title="Ruim (2)"></label>
+
+                <input type="radio" id="star1" name="nota" value="1" />
+                <label for="star1" title="Muito Ruim (1)"></label>
+            </div>
+        </div>
+
+        <input type="hidden" name="status" id="status">
+        
+        <button type="submit" id="submitButton">Concluir</button>
+    </form>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const p = new URLSearchParams(window.location.search);
+        
+        // Elementos do DOM
+        const form = document.getElementById("submissionForm");
+        const courseLabel = document.getElementById("course-label");
+        const ratingSection = document.getElementById("rating-section"); 
+        const notaInputs = document.querySelectorAll('input[name="nota"]');
+        const mainBox = document.querySelector(".main-box");
+        const successBox = document.querySelector(".success-box");
+        const finalMessageTitle = document.getElementById("final-message-title");
+        const successMessage = document.getElementById("success-message");
+        const redirectLink = document.querySelector(".button-link");
+        const submitButton = document.getElementById("submitButton"); // Pego o botão por ID
+
+        const SCRIPT_URL = document.getElementById("scriptUrl").value;
+        const REDIRECT_YOUTUBE = "https://sousaandrade-my.sharepoint.com/:b:/g/personal/bruno_santos_sousaandrade_com_br/IQBV8SGErc8VSo8kFiMy120GAbUaKmo7F_hEQJzcX1fQHRc?e=YMw4kf"; // URL para onde redirecionar
+
+        // --- Função Simples de Capitalização ---
+        function capitalizeFirstLetter(string) {
+            if (!string) return '';
+            string = string.toLowerCase();
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+        
+        // --- 1. Lógica para o Curso ---
+        let cursoValue = p.get("curso");
+        
+        if (cursoValue) {
+            let displayName = cursoValue.replace(/_/g, ' ');
+            displayName = displayName.split(' ').map((word, index) => {
+                return (index === 0) ? capitalizeFirstLetter(word) : word;
+            }).join(' ');
+            
+            document.getElementById("curso").value = cursoValue;
+            courseLabel.textContent = `Sua Avaliação do Curso: ${displayName}`;
+        } else {
+            courseLabel.textContent = "Sua Avaliação do Curso:";
+            console.warn("Parâmetro 'curso' ausente na URL.");
+        }
+
+        // --- 2. Lógica para o Status (Iniciado vs. Concluído) ---
+        const statusValue = p.get("status");
+        document.getElementById("status").value = statusValue || "";
+        
+        // Verifica se o status é "iniciado" (caso 1)
+        if (statusValue && statusValue.toLowerCase() === "iniciado") {
+            
+            // 1. Oculta a avaliação
+            ratingSection.style.display = 'none';
+
+            // 2. Remove o 'required' da nota (já que não vai ser enviada)
+            notaInputs.forEach(input => {
+                input.removeAttribute('required');
+            });
+
+            // 3. Altera o texto do botão para "Iniciar Curso"
+            submitButton.textContent = 'Iniciar Curso'; 
+            
+            // REMOVIDO: O código que forçava a submissão automática.
+            // O usuário deve preencher nome/email e clicar no botão.
+
+        } else {
+            // Para status vazio ou qualquer outro valor (caso 2 - Conclusão), a avaliação é visível
+            ratingSection.style.display = 'block';
+            notaInputs.forEach(input => {
+                input.setAttribute('required', 'required');
+            });
+            submitButton.textContent = 'Concluir';
+        }
+
+
+        // --- 3. LÓGICA DE SUBMISSÃO COM FETCH ---
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+            
+            // Exibe feedback visual de envio
+            submitButton.textContent = 'Aguarde...';
+            submitButton.disabled = true;
+
+            const formData = new FormData(form);
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(data => {
+                
+                // Se o status for "iniciado" (Caso 1)
+                if (statusValue && statusValue.toLowerCase() === "iniciado") {
+                    
+                    // O App Script retornará "REGISTRO_OK" (indicando que salvou o "iniciado")
+                    // Se for bem-sucedido, mostra a tela de redirecionamento temporário
+                    if (data.trim() === 'REGISTRO_OK') {
+                        
+                        // 1. Configura a tela de sucesso para o redirecionamento
+                        mainBox.classList.add('hidden');
+                        successBox.classList.remove('hidden');
+                        successBox.classList.add('redirect-box');
+                        finalMessageTitle.textContent = 'Iniciando o Curso...';
+                        redirectLink.classList.add('hidden'); // Esconde o botão manual
+                        
+                        // 2. Mensagem de espera com contagem regressiva
+                        let countdown = 5;
+                        successMessage.innerHTML = `Aguarde, seu curso começará em alguns instantes. Redirecionando em <span id="countdown">${countdown}</span> segundos.`;
+
+                        const countdownElement = document.getElementById("countdown");
+
+                        // 3. Inicia a contagem e redireciona
+                        const interval = setInterval(() => {
+                            countdown--;
+                            if (countdownElement) countdownElement.textContent = countdown;
+                            
+                            if (countdown <= 0) {
+                                clearInterval(interval);
+                                window.top.location.href = REDIRECT_YOUTUBE; // Redireciona
+                            }
+                        }, 1000);
+
+                    } else {
+                        // Trata erros de registro
+                        // alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
+                        submitButton.textContent = 'Iniciar Curso'; // Volta o texto do botão
+                        submitButton.disabled = false;
+                    }
+
+                } else { 
+                    // Se o status não for "iniciado" (Caso 2 - Conclusão/Avaliação)
+                    if (data.trim() === 'REGISTRO_OK') {
+                        // Mostra a tela de sucesso padrão (com botão de voltar/início)
+                        mainBox.classList.add('hidden');
+                        successBox.classList.remove('hidden');
+                        successBox.classList.remove('redirect-box');
+                        finalMessageTitle.textContent = '🎉 Curso Conluído!!!';
+                        successMessage.textContent = 'Obrigado! Sua avaliação foi registrada com sucesso.';
+                        irectLink.classList.remove('hidden');
+                    } else {
+                        // Trata erros de registro
+                        // alert('Houve um erro no registro ou resposta inesperada: ' + data.trim());
+                        submitButton.textContent = 'Concluir';
+                        submitButton.disabled = false;
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Erro na submissão:', error);
+                // alert('Erro na conexão. Verifique sua URL do App Script e a conexão de e.');
+                submitButton.textContent = (statusValue && statusValue.toLowerCase() === "iniciado") ? 'Iniciar Curso' : 'Concluir';
+                submitButton.disabled = false;
+            });
+        });
+
+    });
+</script>
+
+</body>
+</html>
