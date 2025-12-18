@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Confirmação de Curso - Sousa Andrade</title>
+<title>Acesso ao Curso - Sousa Andrade Academy</title>
 
 <style>
     body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; transition: all 0.5s ease; }
@@ -39,21 +39,6 @@
     }
 
     .hidden { display: none !important; }
-
-    .rating-box { display: flex; justify-content: space-between; direction: rtl; margin: 15px 0 25px 0; }
-    .rating-box input[type="radio"] { display: none; }
-    .rating-box label { font-size: 40px; color: #ccc; cursor: pointer; position: relative; min-width: 45px; text-align: center; }
-    .rating-box label[for="star5"]::before { content: '😀'; }
-    .rating-box label[for="star4"]::before { content: '🙂'; }
-    .rating-box label[for="star3"]::before { content: '😐'; }
-    .rating-box label[for="star2"]::before { content: '🙁'; }
-    .rating-box label[for="star1"]::before { content: '😡'; } 
-
-    .rating-box input[type="radio"]:checked + label::after {
-        content: '\2713'; position: absolute; bottom: -15px; left: 50%;
-        transform: translateX(-50%); background-color: #28a745;
-        color: white; font-size: 14px; padding: 3px 6px; border-radius: 50%;
-    }
     
     .success-box { text-align: center; }
     #pdf-container { width: 100%; height: 750px; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; background: #eee; }
@@ -79,134 +64,89 @@
     <form id="submissionForm">
         <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
         
-        <input type="text" name="nome" placeholder="Seu nome" required>
-        <input type="email" name="email" placeholder="Seu email" required>
+        <input type="text" name="nome" placeholder="Seu nome completo" required>
+        <input type="email" name="email" placeholder="Seu e-mail corporativo" required>
         
         <input type="hidden" name="curso" id="curso">
-        <input type="hidden" name="status" id="status">
-        
-        <div id="rating-section"> 
-            <label id="course-label" style="margin-bottom: 10px; display: block; font-weight: bold;">Sua Avaliação do Curso:</label>
-            <div class="rating-box">
-                <input type="radio" id="star5" name="nota" value="5" required />
-                <label for="star5"></label>
-                <input type="radio" id="star4" name="nota" value="4" />
-                <label for="star4"></label>
-                <input type="radio" id="star3" name="nota" value="3" />
-                <label for="star3"></label>
-                <input type="radio" id="star2" name="nota" value="2" />
-                <label for="star2"></label>
-                <input type="radio" id="star1" name="nota" value="1" />
-                <label for="star1"></label>
-            </div>
-        </div>
-
-        <button type="submit" id="submitButton">Enviar</button>
+        <input type="hidden" name="status" value="iniciado">
+        <input type="hidden" name="nota" value="N/A"> <button type="submit" id="submitButton">Acessar Material</button>
     </form>
 </div>
 
 <script>
     /* ============================================================
-       PAINEL DE CONFIGURAÇÃO (Para usuários leigos)
-       ============================================================ 
-    */
+       PAINEL DE CONFIGURAÇÃO (Fácil para edição)
+       ============================================================ */
     
-    // 1. Nome do Curso (Aparecerá na sua planilha do Google)
-    const CONFIG_NOME_DO_CURSO = "TrabalhoRemoto2";
+    // 1. Nome do Curso (Como aparecerá na planilha)
+    const CONFIG_NOME_DO_CURSO = "TrabalhoRemoto";
 
-    // 2. O que esta página deve fazer? 
-    // Escreva "iniciado" para mostrar o PDF e Cronômetro.
-    // Escreva "completo" para mostrar apenas a Avaliação (carinhas).
-    const CONFIG_STATUS_PAGINA = "iniciado"; 
-
-    // 3. Link do PDF (Cole aqui o link de incorporação do SharePoint)
+    // 2. Link do PDF (Link de incorporação do SharePoint/OneDrive)
     const CONFIG_LINK_PDF = "https://sousaandrade-my.sharepoint.com/personal/bruno_santos_sousaandrade_com_br/_layouts/15/embed.aspx?UniqueId=8421f155-cfad-4a15-8f24-162332d76d06";
 
-    // 4. Tempo de espera para liberar o botão (em segundos)
+    // 3. Tempo de leitura obrigatória (em segundos) antes de liberar o botão de conclusão
     const CONFIG_TEMPO_ESPERA = 120;
 
+    // 4. Para onde o usuário vai ao clicar em "Concluir" (Link da página de avaliação)
+    const CONFIG_URL_AVALIACAO = `https://sousaandradeti.github.io/cursos/menu.html?curso=${CONFIG_NOME_DO_CURSO}&status=completo`;
+
     /* ============================================================
-       FIM DA CONFIGURAÇÃO (Não alterar nada abaixo)
+       LÓGICA DO SISTEMA
        ============================================================ */
 
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById("submissionForm");
-        const ratingSection = document.getElementById("rating-section"); 
-        const statusValue = CONFIG_STATUS_PAGINA.toLowerCase();
-        const cursoValue = CONFIG_NOME_DO_CURSO;
-
-        // Preenche campos ocultos
-        document.getElementById("curso").value = cursoValue;
-        document.getElementById("status").value = statusValue;
-
-        // Configura comportamento inicial
-        if (statusValue === "iniciado") {
-            ratingSection.classList.add('hidden');
-            document.querySelectorAll('input[name="nota"]').forEach(i => i.removeAttribute('required'));
-            document.getElementById("submitButton").textContent = 'Iniciar Curso';
-        }
+        document.getElementById("curso").value = CONFIG_NOME_DO_CURSO;
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             const submitBtn = document.getElementById("submitButton");
-            submitBtn.textContent = 'Registrando...';
+            submitBtn.textContent = 'Registrando acesso...';
             submitBtn.disabled = true;
 
             fetch(document.getElementById("scriptUrl").value, { method: 'POST', body: new FormData(form) })
             .then(res => res.text())
             .then(data => {
                 if (data.trim() === 'REGISTRO_OK') {
+                    // Esconde formulário e mostra área do PDF
                     document.getElementById("mainBox").classList.add('hidden');
                     const successBox = document.getElementById("successBox");
                     successBox.classList.remove('hidden');
 
+                    document.getElementById("final-message-title").textContent = 'Acesso Liberado!';
+                    const msg = document.getElementById("success-message");
+                    msg.innerHTML = `Carregando material...`;
+
+                    // Expande a caixa para caber o PDF
+                    successBox.style.maxWidth = '1000px'; 
+                    successBox.style.width = '95%';
+                    
+                    // Insere o PDF
+                    const pdfCont = document.getElementById("pdf-container");
+                    pdfCont.classList.remove('hidden');
+                    pdfCont.innerHTML = `<iframe src="${CONFIG_LINK_PDF}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+                    
+                    // Configura o botão de conclusão (inicia desabilitado)
                     const backBtn = document.getElementById("back-button");
+                    backBtn.classList.remove('hidden');
+                    backBtn.href = CONFIG_URL_AVALIACAO;
+                    msg.innerHTML = "Boa leitura! O botão de conclusão será liberado em breve.";
 
-                    if (statusValue === "iniciado") {
-                        document.getElementById("final-message-title").textContent = 'Acesso Liberado!';
-                        let startCountdown = 3;
-                        const msg = document.getElementById("success-message");
-                        
-                        const timer = setInterval(() => {
-                            msg.innerHTML = `O material será exibido em breve...`;
-                            if (startCountdown <= 0) {
-                                clearInterval(timer);
-                                msg.innerHTML = "Boa leitura! O botão de conclusão será liberado após o tempo mínimo.";
-                                
-                                successBox.style.maxWidth = '1000px'; 
-                                successBox.style.width = '95%';
-                                
-                                const pdfCont = document.getElementById("pdf-container");
-                                pdfCont.classList.remove('hidden');
-                                pdfCont.innerHTML = `<iframe src="${CONFIG_LINK_PDF}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
-                                
-                                backBtn.classList.remove('hidden');
-                                backBtn.href = `https://sousaandradeti.github.io/cursos/menu.html?curso=${cursoValue}&status=completo`;
-
-                                setTimeout(() => {
-                                    backBtn.textContent = "Concluir e Avaliar";
-                                    backBtn.classList.remove('disabled');
-                                }, CONFIG_TEMPO_ESPERA * 1000); 
-                            }
-                            startCountdown--;
-                        }, 1000);
-                    } else {
-                        document.getElementById("final-message-title").textContent = '🎉 Concluído!';
-                        document.getElementById("success-message").textContent = 'Sua avaliação foi registrada com sucesso.';
-                        backBtn.classList.remove('hidden', 'disabled');
-                        backBtn.textContent = "Voltar ao Início";
-                        backBtn.href = "https://sousaandrade.sharepoint.com/"; 
-                    }
+                    // Cronômetro para liberar o botão
+                    setTimeout(() => {
+                        backBtn.textContent = "Concluir Leitura e Avaliar";
+                        backBtn.classList.remove('disabled');
+                        msg.innerHTML = "Você já pode prosseguir para a avaliação final.";
+                    }, CONFIG_TEMPO_ESPERA * 1000); 
                 }
             })
             .catch(err => {
-                alert("Erro ao registrar. Verifique sua conexão.");
+                alert("Erro na conexão. Tente novamente.");
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Enviar';
+                submitBtn.textContent = 'Acessar Material';
             });
         });
     });
 </script>
 </body>
 </html>
-
