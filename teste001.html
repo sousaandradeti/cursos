@@ -1,39 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Confirmação de Curso - Sousa Andrade</title>
+
+<style>
+    body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; transition: all 0.5s ease; }
+    
+    .box { 
+        background:white; 
+        max-width:400px; 
+        margin:auto; 
+        padding: 30px 40px;
+        border-radius:10px; 
+        box-shadow:0 0 15px #00000025;
+        box-sizing: border-box;
+        transition: max-width 0.5s ease, width 0.5s ease;
+    }
+    
+    h2 { text-align:center; margin-bottom: 25px; }
+    
+    input[type="text"], input[type="email"], button {
+        width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; 
+        font-size: 16px; border: 1px solid #ccc; box-sizing: border-box;
+    }
+    
+    button { 
+        background:#0176ff; color:white; cursor:pointer; border:none;
+        padding: 14px; margin-top: 20px; font-weight: bold; transition: background 0.2s;
+    }
+    button:hover:not(:disabled) { background:#005ad1; }
+    
+    button:disabled, .button-link.disabled {
+        background: #ccc !important;
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .hidden { display: none !important; }
+
+    .rating-box { display: flex; justify-content: space-between; direction: rtl; margin: 15px 0 25px 0; }
+    .rating-box input[type="radio"] { display: none; }
+    .rating-box label { font-size: 40px; color: #ccc; cursor: pointer; position: relative; min-width: 45px; text-align: center; }
+    .rating-box label[for="star5"]::before { content: '😀'; }
+    .rating-box label[for="star4"]::before { content: '🙂'; }
+    .rating-box label[for="star3"]::before { content: '😐'; }
+    .rating-box label[for="star2"]::before { content: '🙁'; }
+    .rating-box label[for="star1"]::before { content: '😡'; } 
+
+    .rating-box input[type="radio"]:checked + label::after {
+        content: '\2713'; position: absolute; bottom: -15px; left: 50%;
+        transform: translateX(-50%); background-color: #28a745;
+        color: white; font-size: 14px; padding: 3px 6px; border-radius: 50%;
+    }
+    
+    .success-box { text-align: center; }
+    #pdf-container { width: 100%; height: 750px; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; background: #eee; }
+
+    .button-link {
+        display: inline-block; width: 100%; padding: 14px; border-radius: 6px;
+        font-size: 16px; font-weight: bold; text-align: center; text-decoration: none;
+        background:#0176ff; color:white; margin-top: 20px; box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+
+<div class="box success-box hidden" id="successBox">
+    <h2 id="final-message-title">Processando...</h2>
+    <p id="success-message"></p>
+    <div id="pdf-container" class="hidden"></div>
+    <a href="#" id="back-button" class="button-link hidden disabled">Aguarde...</a>
+</div>
+
+<div class="box main-box" id="mainBox">
+    <h2>Sousa Andrade Academy</h2>
+    <form id="submissionForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
+        
+        <input type="text" name="nome" placeholder="Seu nome" required>
+        <input type="email" name="email" placeholder="Seu email" required>
+        
+        <input type="hidden" name="curso" id="curso">
+        <input type="hidden" name="status" id="status">
+        
+        <div id="rating-section"> 
+            <label id="course-label" style="margin-bottom: 10px; display: block; font-weight: bold;">Sua Avaliação do Curso:</label>
+            <div class="rating-box">
+                <input type="radio" id="star5" name="nota" value="5" required />
+                <label for="star5"></label>
+                <input type="radio" id="star4" name="nota" value="4" />
+                <label for="star4"></label>
+                <input type="radio" id="star3" name="nota" value="3" />
+                <label for="star3"></label>
+                <input type="radio" id="star2" name="nota" value="2" />
+                <label for="star2"></label>
+                <input type="radio" id="star1" name="nota" value="1" />
+                <label for="star1"></label>
+            </div>
+        </div>
+
+        <button type="submit" id="submitButton">Enviar</button>
+    </form>
+</div>
+
 <script>
     /* ============================================================
-       CONFIGURAÇÕES DO CURSO (Altere os valores abaixo)
-       ============================================================ */
+       PAINEL DE CONFIGURAÇÃO (Para usuários leigos)
+       ============================================================ 
+    */
     
-    // 1. Nome do Identificador do Curso (ex: "TrabalhoRemoto", "Lideranca", "Excel")
-    const NOME_DO_CURSO = "TrabalhoRemoto";
+    // 1. Nome do Curso (Aparecerá na sua planilha do Google)
+    const CONFIG_NOME_DO_CURSO = "TrabalhoRemoto";
 
-    // 2. Status da Página: 
-    // Use "iniciado" para a página de leitura (com cronômetro)
-    // Use "completo" para a página de avaliação final
-    const STATUS_DA_PAGINA = "iniciado"; 
+    // 2. O que esta página deve fazer? 
+    // Escreva "iniciado" para mostrar o PDF e Cronômetro.
+    // Escreva "completo" para mostrar apenas a Avaliação (carinhas).
+    const CONFIG_STATUS_PAGINA = "iniciado"; 
+
+    // 3. Link do PDF (Cole aqui o link de incorporação do SharePoint)
+    const CONFIG_LINK_PDF = "https://sousaandrade-my.sharepoint.com/personal/bruno_santos_sousaandrade_com_br/_layouts/15/embed.aspx?UniqueId=8421f155-cfad-4a15-8f24-162332d76d06";
+
+    // 4. Tempo de espera para liberar o botão (em segundos)
+    const CONFIG_TEMPO_ESPERA = 120;
 
     /* ============================================================
-       FIM DAS CONFIGURAÇÕES (Não mexer abaixo desta linha)
+       FIM DA CONFIGURAÇÃO (Não alterar nada abaixo)
        ============================================================ */
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Agora os valores vêm das variáveis acima, não mais da URL
-        const statusValue = STATUS_DA_PAGINA.toLowerCase();
-        const cursoValue = NOME_DO_CURSO;
-
         const form = document.getElementById("submissionForm");
         const ratingSection = document.getElementById("rating-section"); 
-        
-        // Link do PDF (Pode ser movido para as configurações acima se cada curso tiver um PDF diferente)
-        const EMBED_PDF_URL = "https://sousaandrade-my.sharepoint.com/personal/bruno_santos_sousaandrade_com_br/_layouts/15/embed.aspx?UniqueId=8421f155-cfad-4a15-8f24-162332d76d06";
+        const statusValue = CONFIG_STATUS_PAGINA.toLowerCase();
+        const cursoValue = CONFIG_NOME_DO_CURSO;
 
-        // Aplica o nome do curso e status nos campos ocultos do formulário
+        // Preenche campos ocultos
         document.getElementById("curso").value = cursoValue;
         document.getElementById("status").value = statusValue;
 
-        // Atualiza o link do botão de retorno dinamicamente com base no curso definido
-        const backBtn = document.getElementById("back-button");
-        backBtn.href = `https://sousaandradeti.github.io/cursos/menu.html?curso=${cursoValue}&status=completo`;
-
+        // Configura comportamento inicial
         if (statusValue === "iniciado") {
             ratingSection.classList.add('hidden');
             document.querySelectorAll('input[name="nota"]').forEach(i => i.removeAttribute('required'));
@@ -54,6 +160,8 @@
                     const successBox = document.getElementById("successBox");
                     successBox.classList.remove('hidden');
 
+                    const backBtn = document.getElementById("back-button");
+
                     if (statusValue === "iniciado") {
                         document.getElementById("final-message-title").textContent = 'Acesso Liberado!';
                         let startCountdown = 3;
@@ -63,34 +171,41 @@
                             msg.innerHTML = `O material será exibido em breve...`;
                             if (startCountdown <= 0) {
                                 clearInterval(timer);
-                                msg.innerHTML = "Boa leitura! O botão de conclusão será liberado após a leitura mínima obrigatória.";
+                                msg.innerHTML = "Boa leitura! O botão de conclusão será liberado após o tempo mínimo.";
                                 
                                 successBox.style.maxWidth = '1000px'; 
                                 successBox.style.width = '95%';
                                 
                                 const pdfCont = document.getElementById("pdf-container");
                                 pdfCont.classList.remove('hidden');
-                                pdfCont.innerHTML = `<iframe src="${EMBED_PDF_URL}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+                                pdfCont.innerHTML = `<iframe src="${CONFIG_LINK_PDF}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
                                 
                                 backBtn.classList.remove('hidden');
+                                backBtn.href = `https://sousaandradeti.github.io/cursos/menu.html?curso=${cursoValue}&status=completo`;
 
-                                // Temporizador de 120 segundos
                                 setTimeout(() => {
                                     backBtn.textContent = "Concluir e Avaliar";
                                     backBtn.classList.remove('disabled');
-                                }, 120000); 
+                                }, CONFIG_TEMPO_ESPERA * 1000); 
                             }
                             startCountdown--;
                         }, 1000);
                     } else {
                         document.getElementById("final-message-title").textContent = '🎉 Concluído!';
-                        document.getElementById("success-message").textContent = 'Sua avaliação foi registrada.';
+                        document.getElementById("success-message").textContent = 'Sua avaliação foi registrada com sucesso.';
                         backBtn.classList.remove('hidden', 'disabled');
                         backBtn.textContent = "Voltar ao Início";
                         backBtn.href = "https://sousaandrade.sharepoint.com/"; 
                     }
                 }
+            })
+            .catch(err => {
+                alert("Erro ao registrar. Verifique sua conexão.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar';
             });
         });
     });
 </script>
+</body>
+</html>
