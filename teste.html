@@ -31,16 +31,16 @@
     }
     button:hover:not(:disabled) { background:#005ad1; }
     
-    /* Estado do botão desabilitado */
+    /* Botão desabilitado (cinza e sem clique) */
     button:disabled, .button-link.disabled {
         background: #ccc !important;
         cursor: not-allowed;
         pointer-events: none;
+        opacity: 0.7;
     }
 
     .hidden { display: none !important; }
 
-    /* Estilos da Avaliação */
     .rating-box { display: flex; justify-content: space-between; direction: rtl; margin: 15px 0 25px 0; }
     .rating-box input[type="radio"] { display: none; }
     .rating-box label { font-size: 40px; color: #ccc; cursor: pointer; position: relative; min-width: 45px; text-align: center; }
@@ -72,7 +72,7 @@
     <h2 id="final-message-title">Processando...</h2>
     <p id="success-message"></p>
     <div id="pdf-container" class="hidden"></div>
-    <a href="https://sousaandrade.sharepoint.com/" id="back-button" class="button-link hidden disabled">Concluir (60s)</a>
+    <a href="https://sousaandradeti.github.io/cursos/?curso=TrabalhoRemoto&status=completo" id="back-button" class="button-link hidden disabled">Aguarde...</a>
 </div>
 
 <div class="box main-box" id="mainBox">
@@ -119,13 +119,9 @@
             ratingSection.classList.add('hidden');
             document.querySelectorAll('input[name="nota"]').forEach(i => i.removeAttribute('required'));
             document.getElementById("submitButton").textContent = 'Iniciar Curso';
-        } else {
-            ratingSection.classList.remove('hidden');
         }
 
-        if (cursoValue) {
-            document.getElementById("curso").value = cursoValue;
-        }
+        if (cursoValue) document.getElementById("curso").value = cursoValue;
         document.getElementById("status").value = statusValue;
 
         form.addEventListener('submit', function(e) {
@@ -148,10 +144,10 @@
                         const msg = document.getElementById("success-message");
                         
                         const timer = setInterval(() => {
-                            msg.innerHTML = `O material será exibido em ${startCountdown}...`;
+                            msg.innerHTML = `O material será exibido em breve...`;
                             if (startCountdown <= 0) {
                                 clearInterval(timer);
-                                msg.innerHTML = "Boa leitura! O botão de conclusão será liberado em 1 minuto.";
+                                msg.innerHTML = "Boa leitura! O botão de conclusão será liberado após a leitura mínima obrigatória.";
                                 
                                 successBox.style.maxWidth = '1000px'; 
                                 successBox.style.width = '95%';
@@ -163,18 +159,11 @@
                                 const backBtn = document.getElementById("back-button");
                                 backBtn.classList.remove('hidden');
 
-                                // --- LÓGICA DO TIMER DE 1 MINUTO ---
-                                let timeLeft = 60;
-                                const lockTimer = setInterval(() => {
-                                    timeLeft--;
-                                    backBtn.textContent = `Concluir (${timeLeft}s)`;
-                                    
-                                    if (timeLeft <= 0) {
-                                        clearInterval(lockTimer);
-                                        backBtn.textContent = "Concluir e Voltar";
-                                        backBtn.classList.remove('disabled');
-                                    }
-                                }, 1000);
+                                // --- TEMPORIZADOR DE 120 SEGUNDOS (SEM MOSTRAR CONTAGEM) ---
+                                setTimeout(() => {
+                                    backBtn.textContent = "Concluir e Avaliar";
+                                    backBtn.classList.remove('disabled');
+                                }, 120000); // 120.000 ms = 120 segundos
                             }
                             startCountdown--;
                         }, 1000);
@@ -184,6 +173,7 @@
                         const backBtn = document.getElementById("back-button");
                         backBtn.classList.remove('hidden', 'disabled');
                         backBtn.textContent = "Voltar ao Início";
+                        backBtn.href = "https://sousaandrade.sharepoint.com/"; // Link padrão para conclusão manual
                     }
                 }
             });
