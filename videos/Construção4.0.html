@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Vídeo Aula - Sousa Andrade Academy</title>
+
+<style>
+    body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; transition: all 0.5s ease; }
+    
+    .box { 
+        background:white; 
+        max-width:400px; 
+        margin:auto; 
+        padding: 30px 40px;
+        border-radius:10px; 
+        box-shadow:0 0 15px #00000025;
+        box-sizing: border-box;
+        transition: max-width 0.5s ease, width 0.5s ease;
+    }
+    
+    h2 { text-align:center; margin-bottom: 25px; }
+    
+    input[type="text"], input[type="email"], button {
+        width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; 
+        font-size: 16px; border: 1px solid #ccc; box-sizing: border-box;
+    }
+    
+    button { 
+        background:#0176ff; color:white; cursor:pointer; border:none;
+        padding: 14px; margin-top: 20px; font-weight: bold; transition: background 0.2s;
+    }
+    button:hover:not(:disabled) { background:#005ad1; }
+    
+    button:disabled, .button-link.disabled {
+        background: #ccc !important;
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .hidden { display: none !important; }
+
+    .success-box { text-align: center; }
+    
+    /* Container do Vídeo Responsivo (Mantém 16:9) */
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%; 
+        height: 0;
+        overflow: hidden;
+        margin-top: 20px;
+        border-radius: 8px;
+        background: #000;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .video-container iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .button-link {
+        display: inline-block; width: 100%; padding: 14px; border-radius: 6px;
+        font-size: 16px; font-weight: bold; text-align: center; text-decoration: none;
+        background:#0176ff; color:white; margin-top: 20px; box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+
+<div class="box success-box hidden" id="successBox">
+    <h2 id="final-message-title">Processando...</h2>
+    <p id="success-message"></p>
+    <div id="media-container" class="hidden"></div>
+    <a href="#" id="back-button" class="button-link hidden disabled">Aguarde...</a>
+</div>
+
+<div class="box main-box" id="mainBox">
+    <h2>Sousa Andrade Academy</h2>
+    <form id="submissionForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
+        
+        <input type="text" name="nome" placeholder="Seu nome completo" required>
+        <input type="email" name="email" placeholder="Seu e-mail corporativo" required>
+        
+        <input type="hidden" name="curso" id="curso">
+        <input type="hidden" name="status" value="iniciado">
+        <input type="hidden" name="nota" value="N/A">
+
+        <button type="submit" id="submitButton">Iniciar Vídeo Aula</button>
+    </form>
+</div>
+
+<script>
+    /* ============================================================
+       PAINEL DE CONFIGURAÇÃO DO VÍDEO (Edite aqui)
+       ============================================================ */
+    
+    // 1. Nome do Curso
+    const CONFIG_NOME_CURSO = "Construção 4.0";
+
+    // 2. Link de Incorporação do YouTube (Use o formato /embed/...)
+    const CONFIG_LINK_VIDEO = "https://www.youtube.com/embed/rw75G-91rG0?list=PLjtnMBIm0kYR7rZ3bHWCb8yaA9OXssq3S";
+
+    // 3. Tempo de espera para liberar o botão de conclusão (em segundos)
+    const CONFIG_TEMPO_ESPERA = 1200;
+
+    // 4. Link para a página de avaliação final
+    const CONFIG_URL_AVALIACAO = `https://sousaandradeti.github.io/cursos/menu.html?curso=${CONFIG_NOME_CURSO}&status=completo`;
+
+    /* ============================================================
+       FIM DA CONFIGURAÇÃO
+       ============================================================ */
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById("submissionForm");
+        document.getElementById("curso").value = CONFIG_NOME_CURSO;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submitButton");
+            submitBtn.textContent = 'Registrando acesso...';
+            submitBtn.disabled = true;
+
+            fetch(document.getElementById("scriptUrl").value, { method: 'POST', body: new FormData(form) })
+            .then(res => res.text())
+            .then(data => {
+                if (data.trim() === 'REGISTRO_OK') {
+                    document.getElementById("mainBox").classList.add('hidden');
+                    const successBox = document.getElementById("successBox");
+                    successBox.classList.remove('hidden');
+
+                    document.getElementById("final-message-title").textContent = 'Aula Liberada!';
+                    const msg = document.getElementById("success-message");
+                    msg.innerHTML = `O vídeo será carregado em instantes...`;
+
+                    // Expande para o player de vídeo
+                    successBox.style.maxWidth = '900px'; 
+                    successBox.style.width = '95%';
+                    
+                    const mediaCont = document.getElementById("media-container");
+                    mediaCont.classList.remove('hidden');
+                    mediaCont.className = "video-container"; 
+                    mediaCont.innerHTML = `<iframe src="${CONFIG_LINK_VIDEO}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+                    
+                    const backBtn = document.getElementById("back-button");
+                    backBtn.classList.remove('hidden');
+                    backBtn.href = CONFIG_URL_AVALIACAO;
+
+                    // Cronômetro para liberar o botão
+                    setTimeout(() => {
+                        backBtn.textContent = "Concluir Aula e Avaliar";
+                        backBtn.classList.remove('disabled');
+                        msg.innerHTML = "Você já pode prosseguir para a avaliação.";
+                    }, CONFIG_TEMPO_ESPERA * 1000); 
+                }
+            })
+            .catch(err => {
+                alert("Erro ao conectar. Tente novamente.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Iniciar Vídeo Aula';
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
