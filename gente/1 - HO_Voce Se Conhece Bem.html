@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Material do Curso - Sousa Andrade Academy</title>
+
+<style>
+    body { font-family: Arial, sans-serif; background:#f7f7f7; padding:40px; transition: all 0.5s ease; }
+    
+    .box { 
+        background:white; 
+        max-width:400px; 
+        margin:auto; 
+        padding: 30px 40px;
+        border-radius:10px; 
+        box-shadow:0 0 15px #00000025;
+        box-sizing: border-box;
+        transition: max-width 0.5s ease, width 0.5s ease;
+    }
+    
+    h2 { text-align:center; margin-bottom: 25px; }
+    
+    input[type="text"], input[type="email"], button {
+        width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 6px; 
+        font-size: 16px; border: 1px solid #ccc; box-sizing: border-box;
+    }
+    
+    button { 
+        background:#0176ff; color:white; cursor:pointer; border:none;
+        padding: 14px; margin-top: 20px; font-weight: bold; transition: background 0.2s;
+    }
+    button:hover:not(:disabled) { background:#005ad1; }
+    
+    button:disabled, .button-link.disabled {
+        background: #ccc !important;
+        cursor: not-allowed;
+        pointer-events: none;
+        opacity: 0.7;
+    }
+
+    .hidden { display: none !important; }
+    
+    .success-box { text-align: center; }
+    #pdf-container { width: 100%; height: 750px; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; background: #eee; }
+
+    .button-link {
+        display: inline-block; width: 100%; padding: 14px; border-radius: 6px;
+        font-size: 16px; font-weight: bold; text-align: center; text-decoration: none;
+        background:#0176ff; color:white; margin-top: 20px; box-sizing: border-box;
+    }
+</style>
+</head>
+<body>
+
+<div class="box success-box hidden" id="successBox">
+    <h2 id="final-message-title">Processando...</h2>
+    <p id="success-message"></p>
+    <div id="pdf-container" class="hidden"></div>
+    <a href="#" id="back-button" class="button-link hidden disabled">Aguarde...</a>
+</div>
+
+<div class="box main-box" id="mainBox">
+    <h2>Sousa Andrade Academy</h2>
+    <form id="submissionForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbyxJcX4G0468ooL8qKWKZEUJgVFH2z9jtwbdNeDCht2Fnx_Y7MbWUEy9T-ZkCg_d9j5/exec">
+        
+        <input type="text" name="nome" placeholder="Seu nome completo" required>
+        <input type="email" name="email" placeholder="Seu e-mail corporativo" required>
+        
+        <input type="hidden" name="curso" id="curso">
+        <input type="hidden" name="status" value="iniciado">
+        <input type="hidden" name="nota" value="N/A">
+
+        <button type="submit" id="submitButton">Acessar Material PDF</button>
+    </form>
+</div>
+
+<script>
+    /* ============================================================
+       PAINEL DE CONFIGURAÇÃO DO PDF (Edite apenas aqui)
+       ============================================================ */
+    
+    // 1. Nome do Curso (Como aparecerá no seu controle)
+    const CONFIG_NOME_CURSO = "1 - HO_Voce Se Conhece Bem";
+
+    // 2. Link de Incorporação do SharePoint/PDF
+    const CONFIG_LINK_PDF = "https://sousaandrade.sharepoint.com/sites/SaAcademy/_layouts/15/embed.aspx?UniqueId=96043650-1104-4154-b9f7-e9b1145b0024";
+
+    // 3. Tempo de leitura obrigatória (em segundos)
+    const CONFIG_TEMPO_ESPERA = 120;
+
+    // 4. Link da página de avaliação (onde o aluno vai após ler)
+    const CONFIG_URL_AVALIACAO = `https://sousaandradeti.github.io/cursos/menu.html?curso=${CONFIG_NOME_CURSO}&status=completo`;
+
+    /* ============================================================
+       LÓGICA DO SISTEMA
+       ============================================================ */
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById("submissionForm");
+        document.getElementById("curso").value = CONFIG_NOME_CURSO;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById("submitButton");
+            submitBtn.textContent = 'Registrando...';
+            submitBtn.disabled = true;
+
+            fetch(document.getElementById("scriptUrl").value, { method: 'POST', body: new FormData(form) })
+            .then(res => res.text())
+            .then(data => {
+                if (data.trim() === 'REGISTRO_OK') {
+                    document.getElementById("mainBox").classList.add('hidden');
+                    const successBox = document.getElementById("successBox");
+                    successBox.classList.remove('hidden');
+
+                    document.getElementById("final-message-title").textContent = 'Acesso Liberado!';
+                    const msg = document.getElementById("success-message");
+                    msg.innerHTML = `Carregando material...`;
+
+                    // Expande para visualização do PDF
+                    successBox.style.maxWidth = '1000px'; 
+                    successBox.style.width = '95%';
+                    
+                    const pdfCont = document.getElementById("pdf-container");
+                    pdfCont.classList.remove('hidden');
+                    pdfCont.innerHTML = `<iframe src="${CONFIG_LINK_PDF}" width="100%" height="750px" frameborder="0" scrolling="no" allowfullscreen></iframe>`;
+                    
+                    const backBtn = document.getElementById("back-button");
+                    backBtn.classList.remove('hidden');
+                    backBtn.href = CONFIG_URL_AVALIACAO;
+                    msg.innerHTML = "Boa leitura! O botão de conclusão será liberado em breve.";
+
+                    // Cronômetro para o botão de conclusão
+                    setTimeout(() => {
+                        backBtn.textContent = "Concluir e Avaliar";
+                        backBtn.classList.remove('disabled');
+                        msg.innerHTML = "Clique no botão abaixo para finalizar esta etapa.";
+                    }, CONFIG_TEMPO_ESPERA * 1000); 
+                }
+            })
+            .catch(err => {
+                alert("Erro ao registrar. Tente novamente.");
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Acessar Material PDF';
+            });
+        });
+    });
+</script>
+</body>
+</html>
+
+
