@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trilha TI - Relação de Cursos</title>
+    <title>Onboarding - Treinamentos Obrigatórios</title>
     <style>
         :root {
             --primary-color: #000000;
@@ -25,11 +25,10 @@
 
         .header {
             max-width: 800px;
-            margin: 40px auto 40px;
+            margin: 40px auto 20px;
             padding: 0 20px;
         }
 
-        /* Estilo do Botão Voltar */
         .btn-back {
             display: inline-flex;
             align-items: center;
@@ -54,6 +53,28 @@
             margin: 0 0 10px 0;
             border-left: 6px solid var(--accent-color);
             padding-left: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        /* Bloco de Instruções */
+        .onboarding-info {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            padding: 0 20px;
+        }
+
+        .info-box {
+            background-color: var(--bg-hover);
+            border-left: 4px solid var(--accent-color);
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.95rem;
         }
 
         .course-list {
@@ -138,8 +159,21 @@
         ← Voltar para a página anterior
     </button>
     
-    <h1>Trilha TI</h1>
-    <p>Relação oficial de documentos e treinamentos.</p>
+    <h1>Onboarding</h1>
+    <p class="subtitle">
+        Bem-vindo ao time! Esta é a sua trilha inicial. Abaixo, você encontrará a relação de 
+        <strong>treinamentos e políticas obrigatórias</strong> que devem ser concluídos nos seus primeiros dias.
+    </p>
+</div>
+
+<div class="onboarding-info">
+    <div class="info-box">
+        <strong>Instruções de Integração:</strong>
+        <p style="margin: 10px 0 0 0;">
+            Estes documentos garantem o alinhamento com nossa cultura e diretrizes operacionais. 
+            Leia cada item com atenção antes de prosseguir para o próximo módulo.
+        </p>
+    </div>
 </div>
 
 <ul class="course-list">
@@ -149,7 +183,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">Boas Vindas - Sousa Andrade</span>
-            <span class="course-description"></span>
+            <span class="course-description">Mensagem de recepção e orientações básicas.</span>
         </div>
         <a href="/Boas Vindas - Sousa Andrade.html" class="course-link">Acessar Curso</a>
     </li>
@@ -157,7 +191,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">Código de Ética V01</span>
-            <span class="course-description"></span>
+            <span class="course-description">Diretrizes de conduta e valores da empresa.</span>
         </div>
         <a href="/Código de Ética V01.html" class="course-link">Acessar Curso</a>
     </li>
@@ -173,7 +207,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">DS.03 V00 - Identidade Organizacional</span>
-            <span class="course-description"></span>
+            <span class="course-description">Missão, visão e valores institucionais.</span>
         </div>
         <a href="/DS.03 V00 - Identidade Organizacional.html" class="course-link">Acessar Curso</a>
     </li>
@@ -197,7 +231,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">PCA.01 V00 - Política de Anticorrupção</span>
-            <span class="course-description"></span>
+            <span class="course-description">Normas de conformidade e integridade.</span>
         </div>
         <a href="/PCA.01 V00 - Política de Anticorrupção.html" class="course-link">Acessar Curso</a>
     </li>
@@ -213,7 +247,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">PCA.03 V00 - Política de não discriminação</span>
-            <span class="course-description"></span>
+            <span class="course-description">Compromisso com o respeito e diversidade.</span>
         </div>
         <a href="/PCA.03 V00 - Política de não discriminação.html" class="course-link">Acessar Curso</a>
     </li>
@@ -237,7 +271,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">PCA.06 V01 - Política de Home Office</span>
-            <span class="course-description"></span>
+            <span class="course-description">Regras para trabalho remoto.</span>
         </div>
         <a href="/PCA.06 V01 - Política de Home Office.html" class="course-link">Acessar Curso</a>
     </li>
@@ -261,7 +295,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">PCA.11 V00 - Política de Ativos de TI</span>
-            <span class="course-description"></span>
+            <span class="course-description">Uso correto de equipamentos e sistemas.</span>
         </div>
         <a href="/PCA.11 V00 - Política de Ativos de TI.html" class="course-link">Acessar Curso</a>
     </li>
@@ -301,7 +335,7 @@
     <li class="course-item">
         <div class="course-info">
             <span class="course-title">Parcerias SA</span>
-            <span class="course-description"></span>
+            <span class="course-description">Convênios e benefícios parceiros.</span>
         </div>
         <a href="/Parcerias SA.html" class="course-link">Acessar Curso</a>
     </li>
