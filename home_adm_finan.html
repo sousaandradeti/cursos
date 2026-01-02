@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilha Administrativo Financeiro - Relação de Cursos</title>
+    <style>
+        :root {
+            --primary-color: #000000; /* Escrita em Preto */
+            --accent-color: #8b5cf6;  /* Roxo para botões e detalhes */
+            --border-color: #e2e8f0;
+            --bg-page: #ffffff;
+            --bg-hover: #f5f3ff;     /* Lavanda suave para o hover */
+            --text-description: #1a1a1a; /* Cinza quase preto para descrições */
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--primary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-page);
+        }
+
+        .header {
+            max-width: 800px;
+            margin: 60px auto 40px;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            border-left: 6px solid var(--accent-color); /* Detalhe em Roxo */
+            padding-left: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .course-list {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            list-style: none;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .course-item:hover {
+            background-color: var(--bg-hover);
+            padding-left: 15px;
+            padding-right: 15px;
+            border-radius: 12px;
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .course-description {
+            font-size: 0.95rem;
+            color: var(--text-description);
+        }
+
+        /* Botões em Roxo */
+        .course-link {
+            margin-left: 20px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 8px 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .course-link:hover {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+
+        footer {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .category-label {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-color); /* Roxo */
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Trilha Administrativo Financeiro</h1>
+    <p class="subtitle">Relação oficial de treinamentos e capacitações técnicas do departamento.</p>
+</div>
+
+<ul class="course-list">
+    
+    <div class="category-label">Fundamentos</div>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Onboarding</span>
+            <span class="course-description">Primeiros passos, acessos e ferramentas de trabalho.</span>
+        </div>
+        <a href="#" class="course-link">Acessar Curso</a>
+    </li>
+
+
+    <div class="category-label">CURSOS RECOMENDADOS</div>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Gestão Financeira e Controladoria</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="#" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Gestão de Fluxo de Caixa e Capital de Giro</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="#" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Gestão de Contas a Pagar e a Receber</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="#" class="course-link">Acessar Curso</a>
+    </li>
+
+
+</ul>
+
+<footer>
+    &copy; 2026 Departamento de TI - Lista de Treinamentos Atualizada
+</footer>
+
+</body>
+</html>
