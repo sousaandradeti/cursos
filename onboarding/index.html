@@ -1,1 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilha TI - Relação de Cursos</title>
+    <style>
+        :root {
+            --primary-color: #000000; /* Escrita em Preto */
+            --accent-color: #8b5cf6;  /* Roxo para botões e detalhes */
+            --border-color: #e2e8f0;
+            --bg-page: #ffffff;
+            --bg-hover: #f5f3ff;     /* Lavanda suave para o hover */
+            --text-description: #1a1a1a; /* Cinza quase preto para descrições */
+        }
 
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--primary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-page);
+        }
+
+        .header {
+            max-width: 800px;
+            margin: 60px auto 40px;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            border-left: 6px solid var(--accent-color); /* Detalhe em Roxo */
+            padding-left: 15px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .course-list {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            list-style: none;
+        }
+
+        .course-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease-in-out;
+        }
+
+        .course-item:hover {
+            background-color: var(--bg-hover);
+            padding-left: 15px;
+            padding-right: 15px;
+            border-radius: 12px;
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .course-description {
+            font-size: 0.95rem;
+            color: var(--text-description);
+        }
+
+        /* Botões em Roxo */
+        .course-link {
+            margin-left: 20px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 8px 20px;
+            border: 2px solid var(--accent-color);
+            border-radius: 8px;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .course-link:hover {
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
+        }
+
+        footer {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .category-label {
+            margin-top: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-color); /* Roxo */
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Onboarding </h1>
+    <p class="subtitle">Relação oficial de treinamentos e capacitações.</p>
+</div>
+
+<ul class="course-list">
+    
+
+
+
+    <div class="category-label">CURSOS OBRIGATÓRIOS</div>
+
+ <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Boas Vindas - Sousa Andrade</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/Boas Vindas - Sousa Andrade.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Código de Ética V01</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/Código de Ética V01.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">DS.02 V15 Matriz de Competência</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/DS.02 V15 Matriz de Competência.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">DS.03 V00 - Identidade Organizacional</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/DS.03 V00 - Identidade Organizacional.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">DS.04 V04 - Macroprocessos</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/DS.04 V04 - Macroprocessos.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">DS.07 V09 Análise Swot e Partes interessadas SGI</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/DS.07 V09 Análise Swot e Partes interessadas SGI.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.01 V00 - Política de Anticorrupção</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.01 V00 - Política de Anticorrupção.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.02 V00 - Política de Voluntariado</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.02 V00 - Política de Voluntariado.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.03 V00 - Política de não discriminação</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.03 V00 - Política de não discriminação.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.04 V00 - Política de Engajamento Cívico</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.04 V00 - Política de Engajamento Cívico.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.05 V00 - Política de Diversidade</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.05 V00 - Política de Diversidade.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.06 V01 - Política de Home Office</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.06 V01 - Política de Home Office.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.07 V00 - Política de uso do Uber corporativo</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.07 V00 - Política de uso do Uber corporativo.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.10 V00 - Política de acordo de adiantamento salarial</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.10 V00 - Política de acordo de adiantamento salarial.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.11 V00 - Política de Ativos de TI</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.11 V00 - Política de Ativos de TI.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.12 V01 - Politica Cargos e Salários</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.12 V01 - Politica Cargos e Salários.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.13 V01 - Política de Bolsa de Estudos</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.13 V01 - Política de Bolsa de Estudos.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.15 V01 - Política de reembolso KM</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.15 V01 - Política de reembolso KM.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">PCA.16 V00 - Política de Viagem</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/PCA.16 V00 - Política de Viagem.html" class="course-link">Acessar Curso</a>
+    </li>
+
+    <li class="course-item">
+        <div class="course-info">
+            <span class="course-title">Parcerias SA</span>
+            <span class="course-description"></span>
+        </div>
+        <a href="/Parcerias SA.html" class="course-link">Acessar Curso</a>
+    </li>
+
+</ul>
+
+<footer>
+    &copy; 2026 Departamento de TI - Lista de Treinamentos Atualizada
+</footer>
+
+</body>
+
+</html>
